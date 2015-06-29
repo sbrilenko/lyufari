@@ -1,0 +1,215 @@
+<?php 
+    $page->addScript('http://maps.google.com/maps/api/js?sensor=false','js/map.js','js/exaptionm.js');
+?>
+<div class="m-b">
+ <div class="cl"></div>
+ <div class="af-header"></div>
+    <h1 class="title">Контактная информация</h1>
+    
+
+    <div style="height:380px;margin:20px 40px 0 40px;overflow: hidden" class="p-r">
+         
+          <div id="map" style="width: 100%;height:inherit;">
+      
+         </div>
+
+
+
+
+        <div class="get_direction" >
+            <div class="f-l left">
+                <p>Проложить<br/>
+                    маршрут</p>
+            <div class="arrow"></div>
+            </div>
+            <div class="f-l right">
+                <div class="abpoint-a">
+                    <input type="text" value="Артема 100, Донецк, Украина, 83000" />
+                </div>
+                <!--div class="abpoint-a-aft"><span class="selected" data-addr="Донбасс Арена">Донбасс Арена</span>, <span class="selected" data-addr="площадь Ленина Донецк">площадь Ленина</span>,<br /><span class="selected" data-addr="аэропорт Донецк Украина">аэропорт</span>, <span class="selected" data-addr="ЖД вокзал Донецк Украина">ЖД вокзал</span></div-->
+                <div class="abpoint-b">
+                    <input type="text" readonly="readonly" value="г. Донецк, ул. Калинина, 118" />
+                </div>
+                <div style="margin-top: 15px;padding-left: 4px;">
+                    <div class="travelling-mode driving selected"></div>
+                    <div class="travelling-mode walking"></div>
+                    <button class="c-button f-r">Проложить маршрут</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cl"></div>
+    <div class="cl"></div>
+    <ul class="c-blocks">
+        <li class="f">
+            <div class="c-blocks-t">Адрес</div>
+            <div class='c-blocks-a'>
+                <div>Украина, Донецк,</div><div>ул. Калинина, 118</div><div>(ориентир ТЦ "Империя мебели")</div>
+            </div>
+        </li>
+        <li class="s">
+            <div class="c-blocks-t">Телефоны</div>
+            <div class='c-blocks-a'>
+                <div>+38 (067) 862 86 48</div><div>+38 (095) 172 72 72</div>
+            </div>
+        </li>
+        <li class="t">
+            <div class="c-blocks-t">E-mail</div>
+            <div class='c-blocks-a'>
+<!--                <div>reception@lyufari.com</div><div>head@lyufari.com</div>-->
+                <div>lyufari@mail.ru</div>
+            </div>
+        </li>
+        <li class="fo">
+            <div class="c-blocks-t">Время работы</div>
+            <div class='c-blocks-a'>
+                <div>Гостиница: круглосуточно</div>
+                <div>Ресторан&nbsp;и&nbsp;доставка с&nbsp;10:00&nbsp;до&nbsp;23:00</div><div>Зона отдыха: круглосуточно</div>
+            </div>
+        </li>
+        <div class="cl"></div>
+    </ul>
+    <div class="cl"></div>
+
+
+    <div class="af-map"></div>
+    <div class="mar_40">
+<!--         <div class="trans-t">К нам можно доехать по Донецку следующим транспортом:</div>-->
+         
+<!--         <ul style="margin-top:9px;" class="width-h-p transps">-->
+            <!--li class="f-l" style="width:31.3%;">
+                <div class="bus"><span>Автобусом</span></div>
+                <div class="transp-tarif">
+                    АС Центр - «Люфари»<br />
+                    Маршрут - 129
+                </div>
+                <div class="transp-tarif">
+                    АС Центр - «Люфари»<br />
+                    Маршрут - 42
+                </div>
+            </li-->
+
+<!--             <li class="f-l" style="width: 36%;margin-right: 4%;">-->
+<!--                <div class="m-bus"><span>Маршрутным&nbsp;такси</span></div>-->
+<!--                <div class="transp-tarif">-->
+<!--                    АС “Крытый рынок” - Усадьба“Люфари” <br/>( Маршрут №63 , № 63 А , № 16 ,автобус № 8)<br/>-->
+<!---->
+<!--				   -->
+<!--                </div>-->
+<!--                <div class="transp-tarif">-->
+<!--                                     АС ”Центр” – Усадьба «Люфари”<br/>( Маршрут № 26 , № 89)<br/>-->
+<!--                </div>-->
+<!--				<div class="transp-tarif">-->
+<!--                          Ж/Д вокзал – Усадьба “Люфари”<br/>( Маршрут № 32 , № 16 , № 26)<br/>-->
+<!--                </div>-->
+<!--            </li>-->
+<!--            <li class="f-l" style="width: 25%;margin-right: 40px;">-->
+<!--                <div class="taxi"><span>Такси 15-85</span></div>-->
+<!--                <div class="transp-tarif">-->
+<!--                    <div class="transp-tarif">-->
+<!--                    Ж/Д вокзал- Усадьба «Люфари» <br />-->
+<!--                   стоимость 40,00 грн-->
+<!--                </div>-->
+<!--                <div class="transp-tarif">-->
+<!--                   Аэропорт- Усадьба «Люфари»<br />-->
+<!--                    стоимость 50,00 грн-->
+<!--                </div>-->
+<!--                </div>-->
+<!--            </li>-->
+<!--			<li class="f-l" style="width: 25%;margin-right: 40px;}">-->
+<!--                <div class="taxi"><span>Такси 15-83</span></div>-->
+<!--                <div class="transp-tarif">-->
+<!--                    <div class="transp-tarif">-->
+<!--                    Ж/Д вокзал- Усадьба «Люфари» <br />-->
+<!--                    стоимость 40,00 грн-->
+<!--                </div>-->
+<!--                <div class="transp-tarif">-->
+<!--                    Аэропорт- Усадьба «Люфари» <br />-->
+<!--                    стоимость 50,00 грн-->
+<!--                </div>-->
+<!--                </div>-->
+<!--            </li>-->
+<!--         </ul>-->
+
+<!--        <div class="clear"></div>-->
+
+        <ul style="margin-top:65px;" class="width-h-p transps">
+            <!--li class="f-l" style="width:31.3%;">
+                <div class="bus"><span>Автобусом</span></div>
+                <div class="transp-tarif">
+                    АС Центр - «Люфари»<br />
+                    Маршрут - 129
+                </div>
+                <div class="transp-tarif">
+                    АС Центр - «Люфари»<br />
+                    Маршрут - 42
+                </div>
+            </li-->
+            <li class="f-l" style="width: 36%;margin-right: 4%;">
+                <div class="m-bus no_pad_left"><span>Услуги трансфера</span></div>
+                <div class="transp-tarif">
+                    Для своих гостей Усадьба «Люфари» предоставляет услуги трансфера. Надежный и опытный водитель  встретит вас в аэропорту, на ж/д вокзале, либо в другом заранее указанном месте. 
+
+
+                </div>
+
+            </li>
+            <li class="f-l" style="width: 25%;margin-right: 40px;">
+                <div class="taxi no_pad_left"><span>Аренда Автомобиля</span></div>
+                <div class="transp-tarif" style="max-width: 360px;">
+                    <div class="transp-tarif">
+                        Возможна аренда автомобиля с водителем на все время пребывания  в командировке.
+                    </div>
+
+                </div>
+            </li>
+            <li class="f-l" style="width: 27%;">
+                <div class="taxi no_pad_left"><span>Дополнительные услуги</span></div>
+                <div class="transp-tarif">
+                    <div class="transp-tarif">
+                        В качестве дополнительных услуг можно воспользоваться услугами переводчика. А также Вы можете заказать <a href="/rus/excursions">экскурсию по городу</a> с профессиональным экскурсоводом.
+                    </div>
+
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="cl"></div>
+    <!--div class="transfer-block mar_40">
+            <div class="f-l" style="width: 32%;">
+                <img style="width: 100%;" src="img/sckoda.png" />
+            </div>
+            <div class="f-r" style="width: 64.2%;">
+                <div class="transfer-title">Трансфер&nbsp;и&nbsp;экскурсия&nbsp;по&nbsp;Донецку</div>
+                <div class="transfer-t font-style-normal">
+                </p>Для своих клиентов Усадьба «Люфари» предоставляет услуги трансфера. Надежный и опытный водитель стретит вас в аэропорту, на ж/д вокзале, либо в другом заранее указанном месте. Стоимость услуги - 100,00 грн.</p>
+                <br />
+                Также возможна аренда автомобиля с водителем на все время пребывания в командировке. В качестве дополнительных услуг можно воспользоваться услугами переводчика, а также заказать <a target="_blank"href="/rus/excursions">экскурсию по городу</a> с профессиональным экскурсоводом.
+        </div>
+            </div>
+    </div-->
+    
+</div>
+<script>
+    var width
+    $(document).ready(function(){
+        width  = $('.get_direction .right').width()
+
+    }).on('click','.get_direction .left',function(){
+            if ($(this).hasClass('active'))
+            {
+                $(this).removeClass('active')
+                $('.get_direction ').stop().animate({right:-width-62},500)
+                $('.get_direction .left p').text('Проложить маршрут ');
+            }
+            else
+            {
+                $(this).addClass('active')
+                $('.get_direction ').stop().animate({right:0},500)
+                $('.get_direction .left p').text("Скрыть ");
+            }
+
+        })
+</script>

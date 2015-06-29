@@ -1,0 +1,340 @@
+<tr>
+<td class='head'>
+<?
+    $tut = 'menu';
+    include "menu.php"; 
+    $db = db :: getInstance();   
+    $form = new ad();
+?>
+</td>
+</tr>
+<tr>
+    <td>
+        <div class="title">Меню</div>
+        <input type='checkbox' name='deleted' /> Показать удаленные<br />
+        Фотграфия должна быть по высоте не меньше 720 пикселей. Сохранение фотографии после кнопки Обновить.
+        <div class="examplehelp">Показать/скрыть значение заполняемых полей</div>
+        <div class="examplehelpjpg"><img style='margin: 10px;' src="../img/admin//help.jpg" /></div>    
+        
+        <?php
+        ///
+    $sql="SELECT s.CODE2 FROM section as s WHERE s.CODE2=1 OR s.CODE2=2000000007 ORDER BY s.POS";
+    //$sql="SELECT s.CODE2 FROM section as s,itemgroup as g,item as i WHERE g.section=s.CODE2 AND g.parent=g.CODE2 AND s.CODE2=1 OR s.CODE2=2000000007 GROUP BY s.CODE2 ORDER BY s.POS ";
+    $db->query($sql);
+    if($db->getCount()>0)
+    {
+        $arr=$db->getArray();
+        echo "<ul>";
+        foreach($arr as $arr_index=>$arr_val)
+        {
+            echo "<li>";
+            echo "<ul>";
+            $sql="SELECT * FROM itemgroup WHERE SECTION=".$arr_val['CODE2']." and ENABLED='T' AND USED='T'";
+            $db->query($sql);
+            if($db->getCount()>0)
+            {
+                $arr_g=$db->getArray();
+                foreach($arr_g as $arr_index=>$arr_g_val)
+                {
+                    //print_r($arr_g_val);
+                    $sql="SELECT * FROM itemgroup WHERE PARENT=".$arr_g_val['CODE2']." and SECTION=".$arr_val['CODE2']." AND ENABLED='T' AND USED='T'";
+                    $db->query($sql);
+                    if($db->getCount()>0)
+                    {
+                        $arr_item=$db->getArray();
+                        $is=0;
+                        foreach($arr_item as $arr_item_index=>$arr_item_val)
+                        {
+                            
+                            $sql="SELECT * FROM item WHERE PRICE>0 AND PARENT=".$arr_item_val['CODE2']." AND SECTION=".$arr_val['CODE2']." AND ENABLED='T' AND USED='T'";
+                            $db->query($sql);
+                            if($db->getCount()>0)
+                            {
+                               $is=1;break; 
+                            }
+                        }
+                        if($is==1)
+                        {
+                            echo "<li class='mainname'><div class='menunamebackpad' style='font-size:15px;margin-left:30px;'><b>".$arr_g_val['NAME']." </b></div>";
+                             echo "<ul>";
+                             foreach($arr_item as $arr_item_index=>$arr_item_val)
+                            {
+                                
+                                $sql="SELECT * FROM item WHERE PARENT=".$arr_item_val['CODE2']." AND SECTION=".$arr_val['CODE2'];
+                                //echo $sql; 
+                                $db->query($sql);
+                                if($db->getCount()>0)
+                                {
+                                    echo "<li class='submainname' style='margin-left:60px;'>";
+                                    echo "<div class='menunamebackpad'>".$arr_item_val['NAME']."</div>";
+                                    echo "<ul>";
+                                    $arr_real_item=$db->getArray();
+                                    foreach($arr_real_item as $arr_real_item_index=>$arr_real_item_val)
+                                    {
+                                        if($arr_real_item_val['DELETED']==1)
+                                        {
+                                            echo "<li class='deleted' style='margin:6px 0;padding: 10px;'>";
+                                        }
+                                        else
+                                        {
+                                            echo "<li style='margin:6px 0;padding: 10px;'>";
+                                        }
+                                        
+                                        echo "<form method='post'>";
+                                            echo "<div style='float:left;'>";
+                                            echo "<input type='hidden' value='edit' name='action'/>";
+                                            echo "<input type='hidden' name='parent' value='".$arr_item_val['CODE2']."'/>";
+                                            if(empty($arr_real_item_val['CODE2']))
+                                            {
+                                                echo "<input type='hidden' name='id' value='".$arr_real_item_val['id']."'/>";
+                                            }
+                                            else
+                                            {
+                                                echo "<input type='hidden' name='id_code' value='".$arr_real_item_val['CODE2']."'/>";
+                                            }
+                                            
+                                            echo "<input type='hidden' name='section' value='".$arr_val['CODE2']."'/>";
+                                            echo "*<input name='name' style='width:350px;' title='Название блюда' value='".$arr_real_item_val['NAME']."' />";
+                                            echo "<input name='weight' class='onlynumbers' title='Выход' value='".$arr_real_item_val['RATE']."'/>";
+                                            echo "<input name='price' class='onlynumbers' title='Цена' value='".$arr_real_item_val['PRICE']."'/>";
+                                           
+                                            if($arr_real_item_val['ENABLED']=='T')
+                                            {
+                                                echo "<input type='checkbox' name='vis' title='Видимость' checked='checked' />";
+                                            }
+                                            else
+                                            {
+                                                echo "<input type='checkbox' name='vis' title='Видимость' />";
+                                            }
+                                            if($arr_real_item_val['USED']=='T')
+                                            {
+                                                echo "<input type='checkbox' name='used' title='Признак «В продаже»' checked='checked' />";
+                                            }
+                                            else
+                                            {
+                                                echo "<input type='checkbox' name='used' title='Признак «В продаже»' />";
+                                            }
+                                            if($arr_real_item_val['DELIVERY']==0)
+                                            {
+                                                echo "<input type='checkbox' name='delivery' title='Доставка' checked='checked' />";
+                                            }
+                                            else
+                                            {
+                                                echo "<input type='checkbox' name='delivery' title='Доставка' />";
+                                            }
+                                            echo "</div>";
+                                            if($arr_real_item_val['DELETED']==0)
+                                            {
+                                               echo "<div style='float:right;'><img style='cursor:pointer;' rel='".$arr_real_item_val['id']."' class='deltovar' title='Удалить товар' src='../img/admin/d.png'/></div>"; 
+                                            }
+                                            else
+                                            {
+                                               echo "<div style='float:right;'><img style='cursor:pointer;' rel='".$arr_real_item_val['id']."' class='rettovar' title='Восстановить товар' src='../img/admin/r.png'/></div>"; 
+                                            }
+                                             echo "<div style='clear:both;'></div>";
+                                            echo "*<input name='name_eng' style='width:350px;' title='Название блюда (английское)' value='".$arr_real_item_val['NAME_ENG']."' />";
+                                            echo "<div style='clear:both;'></div>";
+                                            echo "<input name='description' title='Описание' style='width:100%' value='".$arr_real_item_val['DESCRIPTION']."'/>";
+                                            echo "<input name='description_eng' title='Описание (английское)' style='width:100%' value='".$arr_real_item_val['DESCRIPTION_ENG']."'/>";
+                                            echo "<div style='clear:both;'></div>";
+                                            echo "<div style='float:left;'>";
+                                            if(empty($arr_real_item_val['CODE2']))
+                                            {
+                                                $sql="SELECT * FROM menuphoto WHERE parent=".$arr_real_item_val['id']." AND temp=1 ORDER BY dtcreate DESC LIMIT 1";
+                                            }
+                                            else
+                                            {
+                                                $sql="SELECT * FROM menuphoto WHERE parent=".$arr_real_item_val['CODE2']." AND temp=1 ORDER BY dtcreate DESC LIMIT 1";
+                                            }
+                                            $db->query($sql);
+                                            if($db->getCount()>0)
+                                            {
+                                                $arr_p=$db->getArray();
+                                                $img="<img class='img' src='../img/menu/size1/".$arr_p[0]['name']."_".$arr_p[0]['id'].".jpg' style='width:50px;' /><img ref='".$arr_p[0]['id']."' class='delp' title='Удалить картинку' style='margin-left:7px;' src='/img/admin/d.png'/>";
+                                             }
+                                            else
+                                            {
+                                                $img='';
+                                            }
+                                            
+                                                echo "<input type='file' name='image' accept='image/png,image/jpeg'><input type='button' class='load_image' value='Загрузить фото'><span style='width: 270px;display: inline-block;' class='img_loader_photo'></span><span class='img'>".$img."</span>";
+                                            echo "</div>";
+                                            echo "<div style='float:right;'>";
+                                                echo "<input type='submit' name='' value='Обновить'/>";
+                                            echo "</div>";
+                                            echo "<div style='clear:both;'></div>";
+                                        echo "</form>";
+                                        echo "</li>";
+                                    }
+                                    //add
+                                     echo "<li style='margin:6px 0;padding: 10px;' class='addbludo'>";
+                                     echo "<div style='text-align:center;'>Добавить новое блюдо</div>";
+                                     echo "<form method='post'>";
+                                            echo "<input type='hidden' name='add' value='action'/>";
+                                            echo "<input type='hidden' name='parent' value='".$arr_item_val['CODE2']."'/>";
+                                            echo "<input type='hidden' name='section' value='".$arr_val['CODE2']."'/>";
+                                            echo "*<input name='name' style='width:350px;' title='Название блюда' value='' />";
+                                            echo "<input name='weight' class='onlynumbers' title='Выход' value=''/>";
+                                            echo "<input name='price' class='onlynumbers' title='Цена' value=''/>";
+                                            echo "<input type='checkbox' name='vis' title='Видимость' checked='checked' />";
+                                            echo "<input type='checkbox' name='used' title='Признак «В продаже»' checked='checked' />";
+                                            echo "<input type='checkbox' name='delivery' title='Доставка' checked='checked' />";
+                                            echo "<div style='clear:both;'></div>";
+                                            echo "*<input name='name_eng' style='width:350px;' title='Название блюда (английское)' value='' />";
+                                            echo "<div style='clear:both;'></div>";
+                                            echo "<input name='description' title='Описание' style='width:100%'/>";
+                                            echo "<input name='description_eng' title='Описание (английское)' style='width:100%'/>";
+                                            echo "<div style='clear:both;'></div>";
+                                            
+                                            echo "<div style='float:right;'>";
+                                            echo "<input type='submit' name='' value='Сохранить'/>";
+                                            echo "</div>";
+                                            echo "<div style='clear:both;'></div>";
+                                            //echo $arr_real_item_val['NAME']." | ".$arr_real_item_val['RATE']." | ".$arr_real_item_val['PRICE'];
+                                        echo "</form>";
+                                        echo "</li>";
+                                    echo "</ul>";
+                                    echo "</li>";
+                                }
+                            }
+                            echo "</ul></li>";
+                        }
+                         
+                    }
+                    
+                }
+            }
+            echo "</li></ul>";
+        }
+        echo "</ul>";
+    }
+        ?>
+		<span id="fieldOrder">
+            
+        </span>
+    </td>
+</tr>
+<script type="text/javascript">
+$(function()
+{
+    $('.mainname div').on('click',function()
+    {
+        if($(">ul",$(this).parent()).hasClass('visible'))
+        {
+            $(".submainname ul",$(this).parent()).removeClass('visible')
+            $(".backbottom",$(this).parent()).removeClass('backbottom')
+        }
+        else
+        {
+            $(this).toggleClass('backbottom')
+        }
+        $(">ul",$(this).parent()).toggleClass('visible')
+        
+    })
+    $(document).on('click','input[type=submit]',function()
+    {
+        var $th=$(this)
+        var save = 
+        {
+            url:'views/admin/ajax/menu/menu.php',
+            beforeSubmit: function(jqForm) 
+            {
+            },
+            success: function(responseText) 
+            { 
+                responseText=$.parseJSON(responseText);
+                if(responseText.err)
+                {
+                    alert(responseText.err)
+                    return false;
+                }
+                else
+                if(responseText.act=='add')
+                {
+                    $('input:not(input[type="submit"])',$th.parent().parent().parent()).val('')
+                    var vis=(responseText.vis=='T')?'checked="checked"':''
+                    var used=(responseText.used=='T')?'checked="checked"':''
+                    var delivery=(responseText.delivery==0)?'checked="checked"':''
+                    var $var='<li style="margin:6px 0;padding: 10px;"><form method="post"><div style="float:left;"><input type="hidden" value="edit" name="action"><input type="hidden" name="parent" value="'+responseText.parent+'"><input type="hidden" name="id" value="'+responseText.id+'"><input type="hidden" name="section" value="'+responseText.section+'">*<input name="name" style="width:350px;" title="Название блюда" value="'+responseText.name+'"><input name="weight" class="onlynumbers" title="Выход" value="'+responseText.weight+'"><input name="price" class="onlynumbers" title="Цена" value="'+responseText.price+'"><input type="checkbox" name="vis" title="Видимость" '+vis+'><input type="checkbox" name="used" title="Признак «В продаже»" '+used+'><input type="checkbox" name="delivery" title="Доставка" '+delivery+'></div><div style="float:right;"><img style="cursor:pointer;" rel="'+responseText.id+'" class="deltovar" title="Удалить товар" src="../img/admin/d.png"/></div><div style="clear:both;"></div><input name="name_eng" style="width:350px;" title="Название блюда (английское)" value="'+responseText.name_eng+'"><div style="clear:both;"></div><input name="description" title="Описание" style="width:100%" value="'+responseText.description+'"><input name="description_eng" title="Описание (английское)" style="width:100%" value="'+responseText.description_eng+'"><div style="clear:both;"></div><div style="float:left;"><input type="file" name="image" accept="image/jpg"><input type="button" class="load_image" value="Загрузить фото"><span style="width: 270px;display: inline-block;" class="img_loader_photo"></span><span class="img"></span></div><div style="float:right;"><input type="submit" name="" value="Обновить"></div><div style="clear:both;"></div></form></li>';
+                    $($var).insertBefore($th.parent().parent().parent())
+                }
+               ;
+            }
+        };
+        $(this).parent().parent().ajaxSubmit(save); 
+        return false;  
+    })
+    $(document).on('click','.load_image',function()
+    {
+        var $this=$(this);
+        var loadp = 
+        {
+            url:'views/admin/ajax/menu/photo.php',
+            beforeSubmit: function(jqForm) 
+            {
+                $('input[type="submit"],input[type="button"]').attr('disabled',true)
+                $('.img_loader_photo',$this.parent()).replaceWith("<span style='width: 270px;display: inline-block;' class='img_loader_photo'><img style='margin: 0px 8px 5px;' src='/img/admin/l.gif'/>&nbsp;Подождите идет загрузка фото&nbsp;</span>");
+            },
+            success: function(responseText) 
+            { 
+                responseText=$.parseJSON(responseText);
+                if(responseText.err)
+                {
+                    alert(responseText.err)
+                }
+                else
+                {
+                    $('.img',$this.parent()).replaceWith("<span class='img'><img class='img' style='width:50px;' src='../img/menu/size1/"+responseText.img+".jpg'/><img style='margin-left:7px;' title='Удалить фото' class='delp' title='Удалить картинку' src='/img/admin/d.png' ref='"+responseText.id+"'/></span>")
+                
+                    
+                }
+                $('.img_loader_photo',$this.parent()).replaceWith("<span style='width: 270px;display: inline-block;' class='img_loader_photo'></span>");
+                $('input[type="submit"],input[type="button"]').attr('disabled',false)
+            }
+        };
+        $(this).parent().parent().ajaxSubmit(loadp); 
+        return false; 
+    })
+    $(document).on('click','.delp',function()
+    {
+        if (!confirm('Удалить?')) {return false;}
+        var $idd=$(this).attr('ref')
+        $(this).parent().replaceWith("<span class='img'></span>");
+        $.ajax({
+            type: "POST",
+			url: "../views/admin/ajax/menu/photo.php",
+			data: {act:'delp',id:$idd},
+			success: function(data)
+            {
+
+            }
+		});
+    })
+    $(document).on('click','input[name="deleted"]',function()
+    {
+        if($(this).is(":checked"))
+        {
+            $('.deleted').show()
+        }
+        else
+        {
+            $('.deleted').hide()
+        }
+    })
+    $(document).on('click','img.img',function()
+    {
+    	$('.galery').removeClass('display_none')
+    	$('#for-map').append('<img style="width: 100%;position:absolute;vertical-align: bottom;" src="'+$(this).attr('src')+'"/>')
+        return false
+    })
+    $(document).on('click','#for-map img, .galery_back',function()
+    {
+    	$('#for-map').empty();
+    	$('.galery').addClass('display_none')
+    })
+    $(document).on('click','.examplehelp',function()
+    {
+        $('.examplehelpjpg').toggle()
+    })
+})
+</script>

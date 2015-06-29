@@ -1,0 +1,33 @@
+.delete
+{
+   background: url('../img/delete.png') no-repeat center top;
+width: 23px;
+height: 23px;
+
+position: relative;
+
+left: 224px;
+top: -27px;
+
+}
+.ad_em:hover
+{
+	cursor:pointer;
+
+}
+.ad_em
+{
+	border:none;
+	background:url('../img/p-p_em.png') no-repeat ;
+	width:162px;
+	height:42px;
+}
+.delete:hover
+{
+    background-position:center bottom;
+    cursor:pointer;
+}
+
+.p-a{
+    position:absolute;
+}

@@ -1,0 +1,132 @@
+<?php 
+	//$page = Page :: getInstance(Page :: $HTML5);
+	//$page -> addScript('js/jquery-1.8.2.js');
+   // $page->addScript('js/jquery_1.7.2.js');
+    $page->addScript('js/jquery-1.8.2.js');
+	$page-> setKeywords("");
+	$page->setDescription("");
+    $page->addCss('css/reset.css','css/style.css','css/carusel.css');
+    $page->setTitle('Люфари');
+    $page->addScript(/*'js/srcollmenu.js',*/'js/jquery.jcarousel.js');
+    $page->setFavicon('../img/favicon.ico');
+
+
+?>
+<!-- Put this script tag to the <head> of your page -->
+<script type="text/javascript" src="//vk.com/js/api/openapi.js?96"></script>
+
+<!-- Put this script tag to the <head> of your page -->
+<script type="text/javascript" src="//vk.com/js/api/openapi.js?101"></script>
+
+<script type="text/javascript">
+  VK.init({apiId: 3977270, onlyWidgets: true});
+</script>
+
+<div class="gr-header"></div>
+
+<div class="document">
+
+<!---->
+<div class="m-b overflow-hidden bigger sd">
+<div class="mar_40">
+
+
+
+
+        <div class="cont f-r">
+
+                +38 (067)&nbsp;862&nbsp;86&nbsp;48<br/>+38 (095)&nbsp;172&nbsp;72&nbsp;72
+                <p><a href='/contacts' title=''>Контактная&nbsp;информация</a></p>
+         </div>
+        <div class="f-l"> <div class="h-c"></div></div>
+    <a  class="logo" href="/"></a>
+        <div class="cl"></div>
+</div>
+</div>
+</div>
+   <div id="sticky_navigation_wrapper" >
+    	  <div id="sticky_navigation" style="position: relative; top: 0px;">
+          <div class="m-b">
+            <div class="menu-w">
+            <div class="men-left-d p-a left-zero top-zero"></div>
+            <div class="menu">
+                <table class="width-h-p " style="width: 97%;margin: 0 auto;">
+                <tr>
+                     <!--td><?php echo ($controller->is('hotel'))?'<span>Гостиница</span>':'<a href="/hotel">Гостиница</a>'; ?></td-->
+
+                    <td class="rest"><span class="span_sub">Гостиница</span><div class="sub_menu" style="width: 230px;"><a href="/delux">де люкс</a> <a href="/apartment">апартаменты</a></div> </td>
+
+
+                    <td><?php echo ($controller->is('restaurant'))?'<span>Ресторан</span>':'<a href="/restaurant">Ресторан</a>'; ?></td>
+
+
+                <td class="rest"><span class="span_sub">Зона&nbsp;отдыха</span><div class="sub_menu" style="width: 230px;"><a href="/restarea/bath">Баня на дровах</a> <a href="/restarea/hamam">Турецкий хамам</a><a href="/restarea/banquet">Мини - банкетный зал</a></div> </td>
+
+
+                    <!--td><?php echo ($controller->is('rest'))?'<span>Зона&nbsp;отдыха</span>':'<a href="/rest/area">Зона&nbsp;отдыха</a>'; ?></td-->
+<!--                    <td >--><?php //echo ($controller->is('activity'))?'<span>Мероприятия под ключ</span>':'<span>Мероприятия под ключ</span>'; ?><!--</td>-->
+
+
+                    <td><?php echo ($controller->is('stock'))?'<span>События&nbsp;и&nbsp;акции</span>':'<a href="/stock">События&nbsp;и&nbsp;акции</a>'; ?>
+                <td><?php echo ($controller->is('excursions'))?'<span>Экскурсии</span>':'<a href="/excursions">Экскурсии</a>'; ?></td>
+                
+                </tr>
+            </table>
+            </div>
+            
+            <div class="men-right-d p-a right-zero top-zero"></div>
+            <div class="cl"></div>
+            <div class="menuunder"></div>
+            </div>
+            </div>
+
+       </div>
+      </div>
+   <?php echo ($controller->is('index'))?'<div class="">':'<div class="doc-el">'; ?>
+<script>
+
+    $(document).on('mouseenter touchend','.rest',function(){
+        $(this).find('.sub_menu').css({display:'block'})
+
+    }).on('mouseleave ','.rest',function(){
+            $(this).find('.sub_menu').css({display:'none'})
+
+        })/*.on('mouseenter touchend','.main_block ',function(){
+
+
+            $(this).find('img').css({opacity:0.8})
+
+        }).on('mouseleave ','.main_block',function(){
+            $(this).find('img').css({opacity:1})
+
+        }).on('mouseenter touchend','.main_block ',function(){
+
+
+            $(this).find('.href').stop().fadeIn(300)
+
+        }).on('mouseleave touchend','.main_block ',function(){
+            $(this).find('.href').stop().fadeOut(300)
+        })*/
+
+</script>
+
+<script>
+    $( window ).resize(function() {
+
+
+        $(".main_block").each(function(){
+
+            $(this).css({height:($(this).width())})
+        });
+
+    })
+
+    $( document ).ready(function() {
+
+        $(".main_block").each(function(){
+
+            $(this).css({height:($(this).width())})
+        });
+
+    })
+</script>

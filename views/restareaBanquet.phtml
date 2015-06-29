@@ -1,0 +1,201 @@
+<?php 
+    $page->addScript('js/exaptionm.js','js/jquery.panorama.js','js/jquery.restbron.js','js/jquery.form.js','js/jquery.mousewheel.min.js','js/jquery-ui_1.9.1.js','js/date.js','js/jquery.panoramaelse.js');
+    $page->addCss('css/jquery-ui-1.9.1.css');
+    
+?>
+<script type="text/javascript">
+
+    jQuery(document).ready(function() {
+        jQuery('#mycarousel').jcarousel({
+          /* wrap: 'circular',*/
+        visible: 5,
+            scroll: 2
+        });
+    });
+
+</script>
+<div class="m-b ">
+<div class="mar_40">
+ <div class="cl"></div>
+ <div class="af-header"></div>
+  <h1 class="title" style="margin-bottom: 14px;">Мини - банкетный зал</h1>
+
+        <div class="rest-lu-block-pan-cont" >
+
+
+
+                <div id="fo-map" class="border_gray">
+                    <div class="panorama-view">
+                        <div class="panorama-container">
+                            <img src="../img/pan/panoram2.jpg"   style="position: relative;" class="preload position_absolute left_zero" alt="" width="100%"/>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+        </div>
+
+
+    <div class="cl"></div>
+    <div class="menu-container page_restarea">
+        <div class="menu-inside-container">
+           <p>Небольшой уютный зал создает  непринужденную и конфедициальную обстановку вашей беседе, а русский бильярд поможет весело провести время Вам и Вашим гостям.</p>
+        </div>
+    </div>
+
+
+    <div style="position: relative;margin-top: 20px;">
+            <div class='width-h-p' >
+
+
+                <ul id="mycarousel" class="jcarousel-skin-tango menu-gal-restarea width-h-p" >
+                    <li>
+                        <img alt="" class='gal width-h-p' data-ajax="true" data-current="0" data-folder="img/photos/area/mini-zal/" src='../img/photos/area/mini-zal/01.jpg'/>
+                    </li>
+                    <li>
+                        <img alt="" class='gal width-h-p' data-ajax="true" data-current="1" data-folder="img/photos/area/mini-zal/" src='../img/photos/area/mini-zal/02.jpg'/>
+                    </li>
+                    <li class='margin-zero'>
+                        <img alt="" class='gal width-h-p' data-ajax="true" data-current="2" data-folder="img/photos/area/mini-zal/" src='../img/photos/area/mini-zal/03.jpg'/>
+                    </li>
+                    <li >
+                        <img alt="" class='gal width-h-p' data-ajax="true" data-current="3" data-folder="img/photos/area/mini-zal/" src='../img/photos/area/mini-zal/04.jpg'/>
+                    </li>
+                    <li>
+                        <img alt="" class='gal width-h-p' data-ajax="true" data-current="4" data-folder="img/photos/area/mini-zal/" src='../img/photos/area/mini-zal/05.jpg'/>
+                    </li>
+                    <li class="margin-zero">
+                        <img alt="" class='gal width-h-p' data-ajax="true" data-current="5" data-folder="img/photos/area/mini-zal/" src='../img/photos/area/mini-zal/06.jpg'/>
+                    </li>
+                    <li class="margin-zero">
+                        <img alt="" class='gal width-h-p' data-ajax="true" data-current="6" data-folder="img/photos/area/mini-zal/" src='../img/photos/area/mini-zal/07.jpg'/>
+                    </li>
+                    <li class="margin-zero">
+                        <img alt="" class='gal width-h-p' data-ajax="true" data-current="7" data-folder="img/photos/area/mini-zal/" src='../img/photos/area/mini-zal/08.jpg'/>
+                    </li>
+                    <li class="margin-zero">
+                        <img alt="" class='gal width-h-p' data-ajax="true" data-current="8" data-folder="img/photos/area/mini-zal/" src='../img/photos/area/mini-zal/09.jpg'/>
+                    </li>
+                    <li class="margin-zero">
+                        <img alt="" class='gal width-h-p' data-ajax="true" data-current="9" data-folder="img/photos/area/mini-zal/" src='../img/photos/area/mini-zal/10.jpg'/>
+                    </li>
+                    <li class="margin-zero">
+                        <img alt="" class='gal width-h-p' data-ajax="true" data-current="10" data-folder="img/photos/area/mini-zal/" src='../img/photos/area/mini-zal/11.jpg'/>
+                    </li>
+                    <li class="margin-zero">
+                        <img alt="" class='gal width-h-p' data-ajax="true" data-current="11" data-folder="img/photos/area/mini-zal/" src='../img/photos/area/mini-zal/12.jpg'/>
+                    </li>
+                </ul>
+
+
+
+            </div>
+            <div class="cl"></div>
+        </div>
+     <div class="cl"></div>
+
+
+
+             <?
+             $arr=$DLL->getServicesByType(3);
+             if(count($arr)>0)
+             {
+                 echo ' <div class="title_text_restarea" style="margin-bottom: 34px;margin-top: 31px;"><span class="rest_title_left"></span>Перечень услуг<span class="rest_title_right"></span></div>
+                         <div class="cl"></div>
+
+                         <div class="menu-container p-r">
+                             <div class="menu-inside-container" style="padding: 45px 40px;">
+                                 <div class="width-h-p">';
+                 echo '<ul class="width-h-p rest-area-uslugi">';
+                 foreach($arr as $arr_i=>$arr_v)
+                 {
+                     if($arr_i==0)
+                     {
+                         echo '<li class="top-zero">';
+                     }
+                     else
+                     {
+                         echo '<li>';
+                     }
+                     echo '<div class="rest-area-uslugi-name f-l">'.$arr_v['name'].'</div>
+                                <div class="rest-area-uslugi-desc f-l">'.$arr_v['description'].'</div>
+                                <div class="rest-area-uslugi-price f-l">'.$arr_v['price'].' грн.</div>
+                            </li>';
+                     if(($arr_i+1)%1==0 )
+                     {
+                         echo '<li class="cl"></li>';
+                     }
+                 }
+                 echo '</ul>';
+                 echo '       <div class="cl"></div>
+                                 </div>
+                             </div>
+                         </div>';
+             }
+             ?>
+
+
+
+ <div class='oform page_restarea banquet' style="display:block;height:auto; background: #ffffff;padding: 30px 20px;margin-top: 40px; ">
+
+     <div class="doc-el">
+         <div class="m-b">
+             <?
+             $form="banquet";
+             include "lib/bathhamammini.php";
+             ?>
+
+         </div>
+     </div>
+     <div class="clr"></div>
+ </div>
+
+ </div>
+ </div>
+
+  <div class="cl"></div>
+     <div class="doc-el">
+             <div class="m-b">
+
+            </div>
+     </div>
+<script type="text/javascript">
+    function restareaphotos()
+    {
+        var w=('innerWidth' in window) ? window.innerWidth : document.body.offsetWidth;
+        /*if(w>=1280)
+        {
+            $('.menu-gal-restarea li').each(function(i)
+            {
+                if(i!=0 && (i+1)%3==0)
+                {
+                    $(this).addClass('margin-zero').removeClass('little')
+                }
+            })
+        }
+        else
+        {
+            $('.menu-gal-restarea li').removeClass('margin-zero').addClass('little')
+        }*/
+        if(w<=1000)
+        {
+            $('.top-rest-area').addClass('small')
+            $('.top-rest-area .ic_hamam,.top-rest-area .ic_bany,.top-rest-area .ic_zal').addClass('small')
+        }
+        else
+        {
+            $('.top-rest-area').removeClass('small')
+            $('.top-rest-area .ic_hamam,.top-rest-area .ic_bany,.top-rest-area .ic_zal').removeClass('small')
+        }
+    }
+    $(function()
+    {
+        restareaphotos()
+    })
+    $(window).resize(function()
+    {
+        restareaphotos()
+    })
+</script>

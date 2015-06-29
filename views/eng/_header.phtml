@@ -1,0 +1,59 @@
+<?php 
+	//$page = Page :: getInstance(Page :: $HTML5);
+	//$page -> addScript('js/jquery-1.8.2.js');
+    $page->addScript('js/jquery_1.7.2.js');
+    //$page->addScript('js/jquery191.js');
+	$page-> setKeywords("");
+	$page->setDescription("");
+    $page->addCss('css/reset.css','css/style.css');
+    $page->setTitle('Люфари');
+    $page->addScript('js/srcollmenu.js');
+?>
+<div class="gr-header"></div>
+
+<div class="document">
+
+<!---->
+<div class="m-b overflow-hidden">
+        <div class="f-l">
+            <div class="logolighter"></div>
+            <a href="/"><div class="logo f-l"></div></a>
+        </div>
+        <div class="language f-l"><a href="/rus">ru</a><span class="no-act language-en">en</span></div>
+       
+        <div class="cont f-r">
+                (062)&nbsp;304&nbsp;63&nbsp;53&nbsp;(050)&nbsp;304&nbsp;95&nbsp;82
+                <p><a href='rus/contacts' title=''>Контактная&nbsp;информация</a></p>
+         </div>
+        <div class="h-c"></div>
+        <div class="cl"></div>
+       
+</div>
+</div>
+   <div id="sticky_navigation_wrapper" >
+    	  <div id="sticky_navigation" style="position: relative; top: 0px;">
+          <div class="m-b">
+            <div class="menu-w">
+            <div class="men-left-d p-a left-zero top-zero"></div>
+            <div class="menu">
+                <table class="width-h-p" >
+                <tr>
+                <td><?php echo ($controller->is('hotel'))?'<span>Гостиница</span>':'<a href="/rus/hotel">Гостиница</a>'; ?></td>
+                <td><?php echo ($controller->is('restaurant'))?'<span>Ресторан</span>':'<a href="/rus/restaurant">Ресторан</a>'; ?></td>
+                <td><?php echo ($controller->is('rest'))?'<span>Зона&nbsp;отдыха</span>':'<a href="/rus/rest/area">Зона&nbsp;отдыха</a>'; ?></td>
+                <td><?php echo ($controller->is('stock'))?'<span>События&nbsp;и&nbsp;акции</span>':'<a href="/rus/stock">События&nbsp;и&nbsp;акции</a>'; ?>
+                <td><?php echo ($controller->is('activity'))?'<span>Мероприятия</span>':'<a href="/rus/activity">Мероприятия</a>'; ?></td>
+                <td><?php echo ($controller->is('transfer'))?'<span>Трансфер</span>':'<a href="/rus/transfer">Трансфер</a>'; ?></td>
+                
+                </tr>
+            </table>
+            </div>
+            
+            <div class="men-right-d p-a right-zero top-zero"></div>
+            <div class="cl"></div>
+            <div class="menuunder"></div>
+            </div>
+            </div>
+       </div>
+      </div>
+   <div class="doc-el">

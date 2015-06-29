@@ -1,0 +1,27 @@
+<?php
+$page->addScript('js/jquery-ui_1.9.1.js');
+$page->addCss('css/jquery-ui-1.9.1.css');
+
+?>
+<script type="text/javascript">
+$(document).ready(function()
+{
+    $("<div>fdfdfd</div>" ).dialog({
+        modal:true,
+        width: 405,
+        resizable:false,
+        dialogClass: "style-dialog",
+        open: function() {
+            $('.ui-button').blur();
+            $(this).css({Height:'auto',minHeight:0})
+        },
+        position: { my: "center", at: "center", of: window },
+        onClose:function(){$(this).remove()},
+        buttons: [
+            { text: "Ok", click: function() {
+                $(this).remove()
+            }}
+        ]
+    })
+})
+</script>

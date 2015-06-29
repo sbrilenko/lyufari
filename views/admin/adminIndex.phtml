@@ -1,0 +1,46 @@
+<tr>
+<td class='head'>
+<?
+    $tut = 'index';
+    include "menu.php"; 
+    $db = db :: getInstance();   
+    $form = new ad();
+?>
+</td>
+</tr>
+<tr>
+    <td>
+        <div class="title">Загрузка dbf файлов</div>
+        <form method="post">
+            <input type="file" name="loaddbf[]" multiple /><input type='button' name="clicktoload" value="Загрузить" />
+        </form>
+        
+		<span id="fieldOrder">
+            
+        </span>
+    </td>
+</tr>
+<script type="text/javascript">
+$(function()
+{
+    $('input[name=clicktoload]').on('click',function()
+    {
+        var photoLoader = 
+        {
+            url:   'views/admin/ajax/photoLoader.php',
+            beforeSubmit: function(jqForm) 
+            {
+                $('input[name=clicktoload]').attr('disabled','disabled')
+           	},
+            success: function(responseText) 
+            { 
+                alert(responseText)
+                //location.href="/parser.php";
+                $('input[name=clicktoload]').removeAttr('disabled')
+            }
+        };
+        $(this).parent().ajaxSubmit(photoLoader); 
+        return false;   
+    })
+})
+</script>

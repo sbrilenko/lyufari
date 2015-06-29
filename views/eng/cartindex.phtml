@@ -1,0 +1,200 @@
+<div class="clear_both"></div>
+<div class="margin_auto width4size">
+<h1>Корпоративно-коллективный заказ</h1>
+<div class="bredcromb">Товары с доставкой / Корпоративно-коллективный заказ</div>
+<div class="after-bredcromb-h"></div>
+<div class="float_left">
+<div class="box"></div>
+    <div class="float_left" style="width:657px;">
+    <div class="box-title">Что это такое?</div><div class="box-text">Что это такое? В ассортименте колбасных изделий особое место занимают копченные колбасы. К полукопченным колбасным изделиям относят полукопченные колбасы, выработанные по традиционной технологии и полукопченные колбасы типа "Драгобычская классика". К полукопченным колбасным изделиям относят полукопченные колбасы, выработанные по традиционной технологии и полукопченные колбасы типа "Драгобычская классика"</div>
+    </div>
+</div>
+<div class="float_right">
+<div class="text-align-right" style="margin-right:35px;"><a href="#" class="discont-link">Дисконтная система</a></div>
+<?php
+if(!empty($_SESSION['client']))
+{
+   if($_SESSION['client']['porc']==0)
+   {
+    //по телефону
+    echo "<div class='discont-card float_right'><input style='position: relative;top: 109px;left: 25px;width: 211px;text-align:center;' type='text' name='in' value='".$_SESSION['client']['p']."'/></div>";
+   }
+   else
+   {
+    //по карте
+    echo "<div class='discont-card float_right'><input style='position: relative;top: 109px;left: 25px;width: 211px;text-align:center;' type='text' name='in' value='".$_SESSION['client']['nc']."'/></div>";
+   } 
+}
+else
+{
+    echo "<div class='discont-card float_right'><input style='position: relative;top: 109px;left: 25px;width: 211px;text-align:center;' type='text' name='in' value=''/></div>";
+}
+?>
+<div class="after-disc-card-text">Введите номер телефона или <span class="dotted">номер карты</span></div>
+</div>
+</div>
+</div>
+    <div class="clear_both"></div>
+    <div class="under-shadow"></div>
+    <div class="clear_both"></div>
+<div class="clear_both"></div>
+<div class="margin_auto width4size">
+<div class="clear_both"></div>
+<div class="float_right">
+    <div class="zakazchik">Цены указаны на 03.12.2012</div>
+</div>   
+  
+  <div>
+ <div class="clear_both"></div>
+ <?php 
+   
+if(!empty($_SESSION['arrayorder']))
+{
+    echo "<ul style='padding:0 40px;' class='cart'>";
+     //print_r($_SESSION['arrayorder']);
+    $alltotal=0;
+    foreach($_SESSION['arrayorder'] as $index=>$val)
+    {
+         $total=0;
+        if(!empty($_SESSION['arrayorder'][$index]))
+        {
+            echo "<li>";
+            echo "<div class='float_left zakazchik'>Заказчик: </div>";
+            echo "<div class='float_left'><input class='user' name='user' data-n='".$index."' style='height:14px;width:193px;' type='text' value='".$_SESSION['arrayname'][$index]."'/></div>";
+            echo "<div style='clear:both;'></div>";
+            echo "<ul>";
+            foreach($_SESSION['arrayorder'][$index] as $in=>$v)
+            {
+                echo "<li style='width:100%;' class='prorder'>";
+                echo "<div class='float_left' style='width:2%;'>";
+                echo $in+1;
+                echo "</div>";
+                $sql_get_photo="SELECT * FROM productsphotos WHERE id_product=".$v['id'];
+                $db->query($sql_get_photo);
+                if($db->getCount()>0)
+                {
+                    $arr_p=$db->getArray();
+                    echo "<div class='float_left' style='width:9%;'><img class='float_left' style='width:50%;height:75px;' src='../img/products/1000/".$arr_p[0]['md5_mictotime']."_".$arr_p[0]['id'].".jpg' /></div>";
+                }
+                $sql="SELECT * FROM products WHERE id=".$v['id'];
+                $db->query($sql);
+                if($db->getCount()>0)
+                {
+                    $thispr=$db->getArray();
+                    echo "<div class='float_left' style='width:27%;'>
+                          <div style='width:92%;'><a class='name' href=''>".$thispr[0]['nameSearch']."</a>";
+                    $sql_firm="SELECT name FROM sfirms WHERE id=".$thispr[0]['idFirm'];
+                    $db->query($sql_firm);
+                    if($db->getCount()>0)
+                    {
+                        echo "<div class='from'><a href=''>".$db->getValue()."</a></div></div></div>";   
+                    }
+                    echo "<div class='float_left' style='width:17%;'>";
+                    echo "<div style='width:86%;'><div class='from'>Цена за ".$thispr[0]['pricekkzed'].": ".$thispr[0]['pricekkz']." грн</div>"; 
+                    echo "<div class='from'>Вес: ".$thispr[0]['weightkkz']." ".$thispr[0]['weightkkzed']." &#x00B1; 5%</div>";    
+                    echo "</div></div>";
+                    echo "<div class='float_left' style='width:14%;'>";
+                    echo "<form method='post'><input type='hidden' name='id' value='".$thispr[0]['id']."'/><input type='button' class='plus' style='padding: 1px 6px;' value='+' /><span type='text' style='width:34px;height:16px;padding:0px 7px 2px 7px;border:1px solid grey;' class='val'>".$v['k']."</span><input type='button' style='padding: 1px 8px;' class='minus' value='-' /></form>";
+                    echo "</div>";
+                    echo "<div class='float_left' style='width:20%;'><div style='width:87%;'>";
+                    $total+=$thispr[0]['price']*$v['k'];
+                    echo "Стоимость: <b><span class='price'>".number_format($thispr[0]['price']*$v['k'],2, '.', '')."</span> грн</b>";
+                    echo "</div></div>";
+                    echo "<div class='float_left depprouser' style='width:10%;' data-user='".$index."' data-id='".$v['id']."'>";
+                    echo "Убрать товар";
+                    echo "</div>";
+                    echo "<div style='clear:both;'></div>";
+                }
+                 echo "</li>";
+            }
+            echo "</ul>";
+            echo "<div style='margin:10px 0;width:100%;border-top:1px solid black;height:0px;'></div>";
+            echo "<div class='float_left' style='width:2%;'>&nbsp;";
+            echo "</div>";
+            echo "<div class='float_left' style='width:9%;'>&nbsp;";
+            echo "</div>";
+            echo "<div class='float_left' style='width:27%;'>";
+                echo "<div class='float_left'>Добавить: </div><div class='float_left'><a href='/'>Товар</a></div><div class='float_left'><a href='/'>Набор</a></div>";
+            echo "</div>";
+            echo "<div class='float_left' style='width:31%;'>";
+                echo "<div class='float_left'>Стоимость товаров указана с учетом скидки</div>";
+            echo "</div>";
+            echo "<div class='float_left' style='width:20%;'>";
+                echo "<div class='float_left'><span>Итого: </span><span class='thisusertotal'>".number_format($total,2, '.', '')."</span></div>";
+            echo "</div>";
+            echo "<div class='float_left' style='width:11%;'>";
+                echo "<div class='float_left delall' data-id='".$index."'>Убрать полностью</div>";
+            echo "</div>";
+            echo "</li>";
+            $alltotal+=$total;
+        }
+        
+    }
+    echo "</ul>";
+    echo "<div style='clear:both;'></div>";
+    echo "<div style='text-align:center;'>Общая сумма заказа <span class='alltotal'>".number_format($alltotal,2, '.', '')."</span> грн</div>";
+    echo "<div style='clear:both;'></div>";
+    echo "<div class='under-shadow'></div>";
+    echo "<div style='clear:both;'></div>";
+   
+    echo "<div class='formorder' style='display:none;'>";
+        echo "<div class='float_left'>";
+            echo "<div>Оформление заказа</div>";
+            echo "<div>Мобильный телефон или номер карты</div>";
+            echo "<div><input type='text' style='width:100%;' name='phone' /></div>";
+            echo "<div>ФИО (как к вам обращаться)</div>";
+            echo "<div><input type='text' style='width:100%;' name='fio' /></div>";
+            echo "<div>Адрес доставки</div>";
+            echo "<div><textarea style='width:100%;' name='address'></textarea></div>";
+        echo "</div>";
+        echo "<div class='float_right'>";
+        
+        echo "</div>";
+    echo "</div>";
+    echo "<div style='clear:both;'></div>";
+     echo "<div style='text-align:center;width: 150px;margin: 0 auto;'><div id='orderp'>Оформить заказ</div></div>";
+}
+else
+{
+    echo "ничего не заказано";
+}      
+ echo "<div class='margin_auto width4size'>";
+ $page->addScript('js/jquery.form.js','js/mask.js','js/oform.js');
+?> 
+<div class="clear_both"></div>
+<div class="info float_left">
+    *Под системой расчета в штуках подразумевается минимальный возможный вес покупки. Так например если минимальный вес составляет 400грн, а палка колбасы весит 800грн, вы получаете половину палки колбасы.   
+</div>
+<div class="float_right">
+    <div class="info-center-title float_left">Желаемый товар<div class="text">Напишите товар который вы хотели бы добавить на данную страницу</div></div>
+    <div class="float_left">
+        <textarea style="width:295px;min-width: 295px;max-width:295px;height:60px;min-height:60px;max-height:60px;padding: 0;"></textarea>
+        <div class=""><span class='send float_right'>Отправить</span></div>
+    </div>
+</div>
+ <div class="clear_both"></div>
+<div class="under-shadow"></div>
+ <div class="clear_both"></div>
+ 
+<div class="bottom-block-otstup">
+     <div class="float_left">
+        <div><a class="bottom-block-text-title">Фирменная сеть</a></div>
+        <div class="bottom-block-text ukaina">Приглашаем Вас посетить фирменные магазины, что бы вы могли насладиться процессом выбора и найти. Приглашаем Вас посетить фирменные магазины.</div>
+     </div>
+      <div class="float_left bottom-block-left">
+        <div><a class="bottom-block-text-title">Дисконтная система</a></div>
+        <div class="bottom-block-text card">Порадовать новинками, ознакомить с действующими специальными предложениями и дисконтной программой. Порадовать новинками, ознакомить.</div>
+     </div>
+     <div class="float_left bottom-block-left">
+        <div><a class="bottom-block-text-title">Харьковский мясокомбинат «БМК»</a></div>
+        <div class="bottom-block-text bmk">Порадовать новинками, ознакомить с действующими специальными предложениями и дисконтной программой. Порадовать новинками, ознакомить.</div>
+     </div>
+</div>
+ <div class="clear_both"></div>
+ <div class="after-bottom-block-hei"></div>
+
+ 
+</div>
+</div>
+
+

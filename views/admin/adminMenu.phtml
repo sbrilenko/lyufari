@@ -1,0 +1,466 @@
+<tr>
+<td class='head'>
+<?
+    $page->setTitle('Меню | Люфари');
+    $tut = 'menu';
+    include "menu.php"; 
+    $db = db :: getInstance();   
+    $form = new ad();
+?>
+</td>
+</tr>
+<tr>
+    <td>
+        <div class="title">Меню</div>
+        <!--<input type='checkbox' name='deleted' /> Показать удаленные<br />-->
+        Фотография должна быть по высоте не меньше 720 пикселей. Сохранение фотографии после кнопки Обновить. Приоритет: чем меньше, тем выше выводится в меню
+        <div class="examplehelp">Показать/скрыть значение заполняемых полей</div>
+        <div class="examplehelpjpg"><img style='margin: 10px;' src="../img/admin//help.jpg" /></div>    
+        
+        <?php
+        ///
+        $q_cat = "SELECT * FROM menu_m WHERE parent=0 AND element_submenu = 1 ORDER BY name";  // отобрали категории
+		$db->query($q_cat);
+		if($db->getCount()>0)
+		{
+		  $arr_prosto_bludo;
+		  $arr_main=$db->getArray();
+          echo "<ul>";
+          foreach($arr_main as $arr_main_indexs=>$arr_main_val)
+          {
+                echo "<li class='mainname'>";
+                $invisible=($arr_main_val['invisible']==0)?"checked='checked'":"";
+                echo "<div class='menunamebackpad'></div><form method='post'><div style='font-size:15px;float:left;'><input type='hidden' name='type' value='update_category_name'/><input type='hidden' name='id' value='".$arr_main_val['id']."'/><input name='name' title='русское название' style='width:730px;' value='".$arr_main_val['name']."'/></div><div style='float:right'><img class='drop_category' src='img/admin/d.png' title='Удалить категорию' rel='".$arr_main_val['id']."' /><input type='checkbox' title='Видимость' name='invisible' ".$invisible." /><input type='button' class='update_category' value='Обновить' /></div><div style='clear:both;'></div></form>";
+                $q_sub ="SELECT * FROM menu_m WHERE parent = '$arr_main_val[id]' AND name<>'' AND element_submenu = 1 ORDER BY prior";
+				$db->query($q_sub);
+                if($db->getCount()>0)
+                {
+                    $arr_sub=$db->getArray();
+                    echo "<ul>";
+                    echo "<li class='submainname' style='margin-left:32px;'>";
+                    echo "<div style='text-align:center;'>Добавить подкатегорию</div><form method='post'><div style='font-size:15px;float:left;'><input type='hidden' name='type' value='add_sub_category'/><input type='hidden' name='parent' value='".$arr_sub[0]['parent']."'/><input name='name' title='русское название' style='width:361px;' value=''/></div><div style='float:right'><input type='checkbox' title='Видимость' name='invisible' checked='checked'/><input type='button' class='add_sub_category' value='Добавить' /></div><div style='clear:both;'></div></form>";
+                    foreach($arr_sub as $arr_sub_index=>$arr_sub_val)
+                    {
+                        $invisible=($arr_sub_val['invisible']==0)?"checked='checked'":"";
+                        echo "<li class='submainname' style='margin-left:32px;'>";
+                        $select="";
+                        $select.="<select name='prior' style='margin-top: 0px;height: 22px;' title='Приоритет'>";
+                        for($i=20;$i>=0;$i--)
+                        {
+                            $select.=($arr_sub_val['prior']==$i)?"<option selected='selected' value='".$i."'>".$i."</option>":"<option value='".$i."'>".$i."</option>";
+                        }
+                        $select.="</select>";
+                        echo "<div class='menunamebackpad'></div><form method='post'><div style='font-size:15px;float:left;'><input type='hidden' name='type' value='update_sub_category'/><input type='hidden' name='id' value='".$arr_sub_val['id']."'/><input name='name' title='русское название' style='width:361px;' value='".$arr_sub_val['name']."'/>".$select."</div><div style='float:right'><img class='drop_sub_category' src='img/admin/d.png' title='Удалить подкатегорию' rel='".$arr_sub_val['id']."' /><input type='checkbox' name='invisible' ".$invisible." /><input type='button' class='update_sub_category' value='Обновить' /></div><div style='clear:both;'></div></form>";
+                        
+                        $sql_sub_sub="SELECT * FROM menu_m WHERE  parent = '$arr_sub_val[id]' AND name<>'' AND element_submenu = 0 ORDER BY name";
+                        $db->query($sql_sub_sub);
+                        if($db->getCount()>0)
+                        {
+                            $arr_sub_sub=$db->getArray();
+                            echo "<ul>";
+                            foreach($arr_sub_sub as $arr_sub_sub_index=>$arr_sub_sub_val)
+                            {
+                                $invis=($arr_sub_sub_val['invisible']==0)?'checked="checked"':'';
+                                $deliv=($arr_sub_sub_val['delivery']==1)?'checked="checked"':'';
+                                echo '<li style="margin:6px 0;padding: 10px;"><form method="post"><div style="float:left;"><input type="hidden" name="type" value="bludo_update"/><input type="hidden" name="parent" value="'.$arr_sub_sub_val['parent'].'"><input type="hidden" name="id" value="'.$arr_sub_sub_val['id'].'">*<input name="name" style="width:350px;" title="Название блюда - русское" value="'.$arr_sub_sub_val['name'].'"><input name="weight" class="onlynumbers" title="Выход" value="'.$arr_sub_sub_val['weight'].'"><input name="price" class="onlynumbers" title="Цена" value="'.$arr_sub_sub_val['price'].'"><input type="checkbox" name="vis" title="Видимость" '.$invis.'><input type="checkbox" name="delivery" title="Доставка" '.$deliv.'>Доставка</div><div style="float:right;"><img style="cursor:pointer;" rel="'.$arr_sub_sub_val['id'].'" class="drop_bludo" title="Удалить блюдо" src="../img/admin/d.png"></div><div style="clear:both;"></div><div style="clear:both;"></div><input name="description" title="Описание" style="width:100%" value="'.$arr_sub_sub_val['description'].'"><div style="clear:both;"></div><div style="float:left;"><input type="file" name="image" accept="image/png,image/jpeg"><input type="button" class="load_image" value="Загрузить фото"><span style="width: 270px;display: inline-block;" class="img_loader_photo"></span>';
+                                $sqlphoto='SELECT * FROM menuphoto WHERE parent='.$arr_sub_sub_val['id'].' AND temp=1 ORDER BY dtcreate DESC LIMIT 1';
+                                $db->query($sqlphoto);
+                                if($db->getCount()>0)
+                                {
+                                    $photo_arr=$db->getArray();
+                                    echo '<span class="img"><img class="img" style="width:50px;" src="/img/menu/size1/'.$photo_arr[0]['name'].'_'.$photo_arr[0]['id'].'.jpg" alt="" /><img style="margin-left:7px;" title="Удалить фото" class="delp" src="/img/admin/d.png" ref="'.$photo_arr[0]['id'].'"/></span>';
+                                }
+                                else
+                                {
+                                    echo '<span class="img"></span>';
+                                }
+                                echo '</div><div style="float:right;"><input type="button" class="update_bludo" value="Обновить"></div><div style="clear:both;"></div></form></li>';
+                            }
+                            //добавить новое блюдо
+                            echo '<li style="margin:6px 0;padding: 10px;"><div style="text-align:center;">Добавить блюдо в '.$arr_sub_val['name'].'</div><form method="post"><div style="float:left;"><input type="hidden" name="type" value="bludo_add"/><input type="hidden" name="parent" value="'.$arr_sub_val['id'].'">*<input name="name" style="width:350px;" title="Название блюда - русское" value=""><input name="weight" class="onlynumbers" title="Выход" value=""><input name="price" class="onlynumbers" title="Цена" value=""><input type="checkbox" name="vis" title="Видимость" checked="checked"><input type="checkbox" name="delivery" title="Доставка" checked="checked" />Доставка</div><div style="float:right;"></div><div style="clear:both;"></div><div style="clear:both;"></div><input name="description" title="Описание" style="width:100%" value=""><div style="clear:both;"></div><div style="float:left;"></span>';
+                            echo '<span class="img"></span></div><div style="float:right;"><input type="button" name="" class="add_bludo" value="Добавить"></div><div style="clear:both;"></div></form></li>';
+                            echo "</ul>";
+                        }
+                        else
+                        {
+                            echo "<ul>";
+                            echo '<li style="margin:6px 0;padding: 10px;"><div style="text-align:center;">Добавить блюдо в '.$arr_sub_val['name'].'</div><form method="post"><div style="float:left;"><input type="hidden" name="type" value="bludo_add"><input type="hidden" name="parent" value="'.$arr_sub_val['id'].'">*<input name="name" style="width:350px;" title="Название блюда - русское" value=""><input name="weight" class="onlynumbers" title="Выход" value=""><input name="price" class="onlynumbers" title="Цена" value=""><input type="checkbox" name="vis" title="Видимость" checked="checked"><input type="checkbox" name="delivery" title="Доставка" checked="checked">Доставка</div><div style="float:right;"></div><div style="clear:both;"></div><div style="clear:both;"></div><input name="description" title="Описание" style="width:100%" value=""><div style="clear:both;"></div><div style="float:left;"><span class="img"></span></div><div style="float:right;"><input type="button" name="" class="add_bludo" value="Добавить"></div><div style="clear:both;"></div></form></li>';
+                            echo "</ul>";
+                        }
+                        echo "</li>";
+                    }
+                   
+                }
+                else
+                {
+                    echo "<ul>";
+                    echo "<li class='submainname' style='margin-left:32px;'>";
+                    echo "<div style='text-align:center;'>Добавить подкатегорию</div><form method='post'><div style='font-size:15px;float:left;'><input type='hidden' name='type' value='add_sub_category'/><input type='hidden' name='parent' value='".$arr_main_val['id']."'/><input name='name' title='русское название' style='width:361px;' value=''/></div><div style='float:right'><input type='checkbox' name='invisible' checked='checked' title='Видимость' /><input type='button' class='add_sub_category' value='Добавить' /></div><div style='clear:both;'></div></form>";
+                    
+                }
+                $q_sub_ ="SELECT * FROM menu_m WHERE  parent = '$arr_main_val[id]' AND name<>'' AND element_submenu = 0 ORDER BY name";
+				$db->query($q_sub_);
+                if($db->getCount()>0)
+                {
+                    $arr_prosto_bludo=$db->getArray();
+                    foreach($arr_prosto_bludo as $arr_prosto_bludo_index=>$arr_prosto_bludo_val)
+                    {
+                        /////
+                        $invis=($arr_prosto_bludo_val['invisible']==0)?'checked="checked"':'';
+                        $deliv=($arr_prosto_bludo_val['delivery']==1)?'checked="checked"':'';
+                        echo '<li style="margin:6px 0 6px 32px;padding:16px 10px;" class="hover-bludo"><form method="post"><div style="float:left;"><input type="hidden" name="type" value="bludo_update"/><input type="hidden" name="parent" value="'.$arr_prosto_bludo_val['parent'].'"><input type="hidden" name="id" value="'.$arr_prosto_bludo_val['id'].'">*<input name="name" style="width:350px;" title="Название блюда - русское" value="'.$arr_prosto_bludo_val['name'].'"><input name="weight" class="onlynumbers" title="Выход" value="'.$arr_prosto_bludo_val['weight'].'"><input name="price" class="onlynumbers" title="Цена" value="'.$arr_prosto_bludo_val['price'].'"><input type="checkbox" name="vis" title="Видимость" '.$invis.'><input type="checkbox" name="delivery" title="Доставка" '.$deliv.'>Доставка</div><div style="float:right;"><img style="cursor:pointer;" rel="'.$arr_prosto_bludo_val['id'].'" class="drop_bludo" title="Удалить блюдо" src="../img/admin/d.png"></div><div style="clear:both;"></div><div style="clear:both;"></div><input name="description" title="Описание" style="width:100%" value="'.$arr_prosto_bludo_val['description'].'"><div style="clear:both;"></div><div style="float:left;"><input type="file" name="image" accept="image/png,image/jpeg"><input type="button" class="load_image" value="Загрузить фото"><span style="width: 270px;display: inline-block;" class="img_loader_photo"></span>';
+                        $sqlphoto='SELECT * FROM menuphoto WHERE parent='.$arr_prosto_bludo_val['id'].' AND temp=1 ORDER BY dtcreate DESC LIMIT 1';
+                        $db->query($sqlphoto);
+                        if($db->getCount()>0)
+                        {
+                            $photo_arr=$db->getArray();
+                            echo '<span class="img"><img class="img" style="width:50px;" src="/img/menu/size1/'.$photo_arr[0]['name'].'_'.$photo_arr[0]['id'].'.jpg" alt="" /><img style="margin-left:7px;" title="Удалить фото" class="delp" src="/img/admin/d.png" ref="'.$photo_arr[0]['id'].'"/></span>';
+                        }
+                        else
+                        {
+                            echo '<span class="img"></span>';
+                        }
+                        echo '</div><div style="float:right;"><input type="button" class="update_bludo" value="Обновить"></div><div style="clear:both;"></div></form></li>';
+                        
+                    }
+                }
+                 echo '<li class="hover-bludo" style="margin:6px 0 6px 32px;padding:16px 10px;"><div style="text-align:center;">Добавить блюдо в '.$arr_main_val['name'].'</div><form method="post"><div style="float:left;"><input type="hidden" name="type" value="bludo_add"><input type="hidden" name="parent" value="'.$arr_main_val['id'].'">*<input name="name" style="width:350px;" title="Название блюда - русское" value=""><input name="weight" class="onlynumbers" title="Выход" value=""><input name="price" class="onlynumbers" title="Цена" value=""><input type="checkbox" name="vis" title="Видимость" checked="checked"><input type="checkbox" name="delivery" title="Доставка" checked="checked">Доставка</div><div style="float:right;"></div><div style="clear:both;"></div><div style="clear:both;"></div><input name="description" title="Описание" style="width:100%" value=""><div style="clear:both;"></div><div style="float:left;"><span class="img"></span></div><div style="float:right;"><input type="button" name="" class="add_bludo" value="Добавить"></div><div style="clear:both;"></div></form></li>';
+                 echo "</ul>";
+                 echo '</li>';
+          }
+            echo '<li class="mainname"><div style="text-align:center;">Добавить категорию</div><form method="post"><div style="font-size:15px;float:left;"><input type="hidden" name="type" value="add_category"><input name="name" title="русское название" style="width:730px;" value=""></div><div style="float:right"><input title="" type="checkbox" name="invisible" checked="checked"><input type="button" class="add_category" value="Добавить"></div><div style="clear:both;"></div></form><li>';
+          
+          echo "</ul>";
+          
+        }
+        else
+        {
+             echo '<li class="mainname"><div style="text-align:center;">Добавить категорию</div><form method="post"><div style="font-size:15px;float:left;"><input type="hidden" name="type" value="add_category"><input name="name" title="русское название" style="width:350px;" value=""></div><div style="float:right"><input type="checkbox" name="invisible" checked="checked"><input type="button" class="add_category" value="Добавить"></div><div style="clear:both;"></div></form><li>';
+        }
+        
+        ?>
+		<span id="fieldOrder">
+            
+        </span>
+    </td>
+</tr>
+<script type="text/javascript">
+$(function()
+{
+    $(document).on('click','.mainname .menunamebackpad',function()
+    {
+        if($(">ul",$(this).parent()).hasClass('visible'))
+        {
+            $(".submainname ul",$(this).parent()).removeClass('visible')
+            $(".backbottom",$(this).parent()).removeClass('backbottom')
+        }
+        else
+        {
+            $(this).toggleClass('backbottom')
+        }
+        $(">ul",$(this).parent()).toggleClass('visible')
+        
+    })
+    /*$('.mainname div').on('click',function()
+    {
+        if($(">ul",$(this).parent()).hasClass('visible'))
+        {
+            $(".submainname ul",$(this).parent()).removeClass('visible')
+            $(".backbottom",$(this).parent()).removeClass('backbottom')
+        }
+        else
+        {
+            $(this).toggleClass('backbottom')
+        }
+        $(">ul",$(this).parent()).toggleClass('visible')
+        
+    })*/
+    $(document).on('click','.load_image',function()
+    {
+        var $this=$(this);
+        var loadp = 
+        {
+            url:'views/admin/ajax/menu/photo.php',
+            beforeSubmit: function(jqForm) 
+            {
+                $('input[type=submit],input[type=button]').attr('disabled',true)
+                $('.img_loader_photo',$this.parent()).replaceWith("<span style='width: 270px;display: inline-block;' class='img_loader_photo'><img style='margin: 0px 0px 0px 5px;' src='/img/admin/l.gif'/>&nbsp;Подождите идет загрузка фото&nbsp;</span>");
+            },
+            success: function(responseText) 
+            { 
+                responseText=$.parseJSON(responseText);
+                if(responseText.err)
+                {
+                    alert(responseText.err)
+                }
+                else
+                {
+                    $('.img',$this.parent()).replaceWith("<span class='img'><img class='img' style='width:50px;' src='../img/menu/size1/"+responseText.img+".jpg'/><img style='margin-left:7px;' title='Удалить фото' class='delp' title='Удалить картинку' src='/img/admin/d.png' ref='"+responseText.id+"'/></span>")
+                
+                    
+                }
+                $('.img_loader_photo',$this.parent()).replaceWith("<span style='width: 270px;display: inline-block;' class='img_loader_photo'></span>");
+                $('input[type=submit],input[type=button]').attr('disabled',false)
+            }
+        };
+        $(this).parent().parent().ajaxSubmit(loadp); 
+        return false; 
+    })
+    $(document).on('click','.delp',function()
+    {
+        if (!confirm('Удалить?')) {return false;}
+        var $idd=$(this).attr('ref')
+        $(this).parent().replaceWith("<span class='img'></span>");
+        $.ajax({
+            type: "POST",
+			url: "../views/admin/ajax/menu/photo.php",
+			data: {act:'delp',id:$idd},
+			success: function(data)
+            {
+
+            }
+		});
+    })
+    $(document).on('click','input[name="deleted"]',function()
+    {
+        if($(this).is(":checked"))
+        {
+            $('.deleted').show()
+        }
+        else
+        {
+            $('.deleted').hide()
+        }
+    })
+    $(document).on('click','img.img',function()
+    {
+    	$('.galery').removeClass('display_none')
+    	$('#for-map').append('<img style="position:absolute;vertical-align: bottom;" src="'+$(this).attr('src')+'"/>')
+        return false
+    })
+    $(document).on('click','#for-map img, .galery_back',function()
+    {
+    	$('#for-map').empty();
+    	$('.galery').addClass('display_none')
+    })
+    $(document).on('click','.examplehelp',function()
+    {
+        $('.examplehelpjpg').toggle()
+    })
+    
+    ////
+  $(document).on('click','.update_category',function()
+ {
+    var $this=$(this);
+    var other=$this.parent().parent();
+    var update_category = 
+    {
+        url:'views/admin/ajax/menu/menu.php',
+        beforeSubmit: function(jqForm) 
+        {
+        },
+        success: function(responseText) 
+        { 
+            if(responseText.indexOf("error") == -1)
+            {
+                other.replaceWith(responseText)
+            }
+            else
+            {
+                alert(responseText.replace(/<.*?>/g, ''));
+            }
+        }
+    };
+    $(this).parent().parent().ajaxSubmit(update_category); 
+    return false; 
+ })
+  $(document).on('click','.update_sub_category',function()
+ {
+    var $this=$(this);
+    var other=$this.parent().parent();
+    var update_sub_category = 
+    {
+        url:'views/admin/ajax/menu/menu.php',
+        beforeSubmit: function(jqForm) 
+        {
+        },
+        success: function(responseText) 
+        { 
+            if(responseText.indexOf("error") == -1)
+            {
+                other.replaceWith(responseText)
+            }
+            else
+            {
+                alert(responseText.replace(/<.*?>/g, ''));
+            }
+        }
+    };
+    $(this).parent().parent().ajaxSubmit(update_sub_category); 
+    return false; 
+ })
+ $(document).on('click','.update_bludo',function()
+ {
+ 	 var special_cookie='';
+ 	 var $this=$(this).parent().parent();
+	 var optionsUpdate = {
+        url:    "views/admin/ajax/menu/menu.php",
+        beforeSubmit: function(jqForm) {
+            $('form input[type=file]').attr('disabled',true)
+        },
+        success: function(responseText) {
+          if (responseText.indexOf("error") == -1) {
+				 //$this.replaceWith(responseText);
+            }
+            else
+            {
+            	alert(responseText.replace(/<.*?>/g, ''));
+            }
+            $('form input[type=file]').attr('disabled',false)
+        }
+    };
+        $this.ajaxSubmit(optionsUpdate); 
+        return false;
+ })
+  $(document).on('click','.add_sub_category',function()
+  {
+ 	var $this=$(this).parent().parent()
+	 var add_sub_category = {
+        url:    "views/admin/ajax/menu/menu.php",
+        beforeSubmit: function(jqForm) { 
+        },
+        success: function(responseText) { 
+          if (responseText.indexOf("error") == -1) {
+				 $(responseText).insertAfter($this.parent());
+                 $('input[name="name"]',$this).val('')
+            }
+            else
+            {
+            	alert(responseText.replace(/<.*?>/g, ''));
+            }
+        }
+    };
+        $this.ajaxSubmit(add_sub_category); 
+        return false;
+  
+  })
+  //
+  $(document).on('click','.add_category',function()
+  {
+ 	var $this=$(this).parent().parent()
+	 var add_category = {
+        url:    "views/admin/ajax/menu/menu.php",
+        beforeSubmit: function(jqForm) { 
+        },
+        success: function(responseText) {
+          if (responseText.indexOf("error") == -1) {
+				 $(responseText).insertBefore($this.parent());
+                 $('input[name="name"]',$this).val('')
+            }
+            else
+            {
+            	alert(responseText.replace(/<.*?>/g, ''));
+            }
+        }
+    };
+        $this.ajaxSubmit(add_category); 
+        return false;
+  
+  })
+ //
+  $(document).bind($.browser.webkit ? 'keydown' : 'keypress', function (event) { 
+    if ((event.which || event.keyCode) === 27) {
+        event.preventDefault();
+        return false;
+    }
+	});
+     
+  $(document).on('click','.drop_bludo',function()
+  {
+  	 if (!confirm('Действительно удалить?')) {
+        return false;
+    }
+    else {
+    		var replace=$(this).parents('form').parent();
+	    	  $.ajax({
+		        url: "views/admin/ajax/menu/menu.php",
+		        type: "post",
+		        async: false,
+		        data:{type:'drop_bludo',id:$(this).attr('rel')},
+		        success: function(data2){ 
+		        	replace.remove()
+		           
+		        }    
+		    });
+       }
+  })
+  $(document).on('click','.drop_category',function()
+  {
+     if (!confirm('Действительно удалить?Удалиться все что есть внутри данной категории')) {
+        return false;
+    }
+    else {
+              var $this=$(this).parent().parent().parent();
+    		  var rel=$(this).attr('rel');
+	    	  $.ajax({
+		        url: "views/admin/ajax/menu/menu.php",
+		        type: "post",
+		        async: false,
+		        data:{type:'drop_category',id:rel},
+		        success: function(data2){ 
+		        	$this.remove(); 
+		        }    
+		    });
+       }
+  })
+  
+  $(document).on('click','.drop_sub_category',function()
+  {
+     if (!confirm('Действительно удалить?Удалиться все что есть внутри данной подкатегории')) {
+        return false;
+    }
+    else {
+              var $this=$(this).parent().parent().parent();
+    		  var rel=$(this).attr('rel');
+	    	  $.ajax({
+		        url: "views/admin/ajax/menu/menu.php",
+		        type: "post",
+		        async: false,
+		        data:{type:'drop_sub_category',id:rel},
+		        success: function(data2){ 
+		        	$this.remove(); 
+		        }    
+		    });
+       }
+  })
+  $(document).on('click','.add_bludo',function()
+  {
+    var $this=$(this).parent().parent()
+	 var add_bludo = {
+        url:    "views/admin/ajax/menu/menu.php",
+        beforeSubmit: function(jqForm) { 
+        },
+        success: function(responseText) { 
+          if (responseText.indexOf("error") == -1) {
+                if($this.parent().parent().parent().attr('class')=='mainname')
+                {
+                    $('<li class="hover-bludo" style="margin:6px 0 6px 32px;padding:16px 10px;">'+responseText+'</li>').insertBefore($this.parent());
+                }
+                else
+                {
+                    $('<li style="margin:6px 0;padding: 10px;">'+responseText+'</li>').insertBefore($this.parent());
+                }
+				 
+                 $('input[name="name"],input[name="description"],input[name="weight"],input[name="price"]',$this).val('')
+            }
+            else
+            {
+            	alert(responseText.replace(/<.*?>/g, ''));
+            }
+        }
+    };
+        $this.ajaxSubmit(add_bludo); 
+        return false;
+  })
+})
+</script>

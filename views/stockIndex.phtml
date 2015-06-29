@@ -1,0 +1,213 @@
+<?php
+$root = $_SERVER['DOCUMENT_ROOT'];
+    $page->addCss('css/jquery-ui-1.9.1.css');
+    $action = $controller -> getParam(1);
+    $id = (int)$controller -> getParam(2);
+    if(!empty($controller->paramsArray[0]) AND (int)$controller->paramsArray[0]>0)
+    {
+        $page_ = $controller->paramsArray[0];
+    }
+    else
+    {
+        $page_=1;
+    }
+  
+?>
+
+<div class="m-b " >
+    <div class="mar_40">
+        <div class="cl"></div>
+        <div class="af-header"></div>
+        <h1 class="title" style="margin-bottom: 14px;">События и акции</h1>
+
+
+
+
+        <ul class="stock_ul">
+            <?php
+            //$sql="SELECT * from events WHERE start_date>='".date('Y-m-d')."' AND (end_date>='".date('Y-m-d')."' OR end_date='0000-00-00') ORDER BY start_date DESC LIMIT ".(($page_*6)-6)." , 6";
+            $sql="SELECT * from events WHERE visible=0 ORDER BY start_date DESC  LIMIT ".(($page_*6)-6)." , 6";
+
+            $db->query($sql);
+
+            if($db->getCount()==0)
+            {
+                $page_=1;
+                $sql="SELECT * from events WHERE visible=0 ORDER BY start_date DESC LIMIT 0, 6";
+                $db->query($sql);
+            }
+
+            if($db->getCount()>0)
+            {
+                $arr=$db->getArray();
+                foreach($arr as $arr_index=>$arr_val)
+                {
+                    if($arr_index==0)
+                    {
+                        echo '<div class="height_auto">';
+                    }
+                    if(($arr_index+1)%2==1 AND $arr_index!=0 )
+                    {
+                        echo '<div class="clear"></div></div><div class="height_auto">';
+                    }
+                    if(($arr_index+1)%2==0)
+                    {
+                        echo '<li class="right">';
+                    }
+                    else
+                    {
+                        echo '<li>';
+                    }
+                    echo '
+                        <div class="img_block">
+                            <a href="/stock/more/number/'.$arr_val['id'].'">
+                                <div class="block_bg "><div class="bg"></div> <div class="center"></div> </div>';
+                                if(file_exists($root.'/img/stock/'.$arr_val['photo'].".jpg"))
+                                {
+                                    echo '<img src="../img/stock/'.$arr_val['photo'].'.jpg" width="100%"/>';
+                                }
+                            echo '</a>
+                        </div>
+                        <div class="text">
+                            <div class="date">';
+                                $month_name_event=array('01'=>"января",'02'=> "февраля", '03'=>"марта",'04'=>"апреля",'05'=>"мая",'06'=>"июня",'07'=>"июля",'08'=>"августа",'09'=>"сентября",'10'=>"октября",'11'=>"ноября",'12'=>"декабря");
+                                $param_date=explode('-',$arr_val['start_date']);
+                                $param_date_end=explode('-',$arr_val['end_date']);
+                                if($param_date[0]==$param_date_end[0])
+                                {
+                                    print ' c '.date('d',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))]." ";
+                                }
+                                else
+                                {
+                                    print date('d',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))]." ".$param_date[0]." ";
+                                }
+                                if($arr_val['time_start']!='00:00:00')
+                                {
+                                    $arr_evets_value_explode_time_start=explode(':',$arr_val['time_start']);
+                                    print ' '.$arr_evets_value_explode_time_start[0].':'.$arr_evets_value_explode_time_start[1];
+                                }
+                                if($arr_val['end_date']!='0000-00-00' OR $arr_val['time_end']!='00:00:00')
+                                {
+                                    print ' по ';
+                                    if($arr_val['end_date']!='0000-00-00')
+                                    {
+                                        $param_date_end=explode('-',$arr_val['end_date']);
+                                        if($param_date[0]==$param_date_end[0])
+                                        {
+                                            print date('d',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))]." ".$param_date_end[0]." ";
+                                        }
+                                        else
+                                        {
+                                            print date('d',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))]." ".$param_date_end[0]." ";
+                                        }
+
+                                        if($arr_val['time_end']!='00:00:00')
+                                        {
+                                            $arr_evets_value_explode_time_end=explode(':',$arr_val['time_end']);
+                                            print ' '.$arr_evets_value_explode_time_end[0].':'.$arr_evets_value_explode_time_end[1];
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        if($arr_val['time_end']!='00:00:00')
+                                        {
+                                            $arr_evets_value_explode_time_end=explode(':',$arr_val['time_end']);
+                                            print $arr_evets_value_explode_time_end[0].'.'.$arr_evets_value_explode_time_end[1];
+                                        }
+                                    }
+                                }
+                    // 3 мая 2013 г. 13:00 по 15 июня 2013 г.ло  20:00
+                            if(strlen($arr_val['description'])>500)
+                            {
+                                $arr_val['description']=substr($arr_val['description'], 0, 500);
+                                $arr_val['description']=substr($arr_val['description'], 0, strripos($arr_val['description'], " "))." ...";
+                            }
+                            echo '</div>
+                            <a href="/stock/more/number/'.$arr_val['id'].'">'.$arr_val['title'].'</a>
+                            <div class="after_href">'.$arr_val['description'].'</div>
+                        </div>
+                    </li>';
+                    if(($arr_index+1)%2==1 OR $arr_index==0)
+                    {
+                        if(isset($arr[$arr_index+1]))
+                        {
+                            echo '<li class="mezgdu"></li>';
+                        }
+                        else
+                        {
+                            echo '<div class="clear"></div>';
+                        }
+                    }
+
+
+                }
+            }
+            ?>
+            </ul>
+
+
+        <div class="clear"></div>
+
+        <div style="text-align: center;">
+            <span class="navig-left"></span>
+            <?php
+            $sql="SELECT * from events WHERE visible=0";
+            $db->query($sql);
+            if($db->getCount()>0)
+            {
+                $arr=$db->getArray();
+                $count1=count($arr);
+                $count=intval($count1/6);
+                if($count1%6>0) $count++;
+                for($i=1;$i<$count+1;$i++)
+                {
+                    if($page_==$i)
+                    {
+                        if($i==1)
+                        {
+                            print '<span class="page-navig active margin-zero">'.$i.'</span>';
+                        }
+                        else
+                        print '<span class="page-navig active ">'.$i.'</span>';
+
+                    }
+                    else
+                    {
+                        if($i==1)
+                        {
+                            echo '<a class="page-navig margin-zero" href="/stock/page/'.$i.'">'.$i.'</a>';
+                        }
+                        else
+                        {
+                            echo '<a class="page-navig" href="/stock/page/'.$i.'">'.$i.'</a>';
+                        }
+
+                    }
+                }
+            }
+            ?>
+
+            <span class="navig-right"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on('mouseenter','.stock_ul li .img_block',function(){
+       $(this).find('.block_bg').stop().fadeIn(200)
+    }).on('mouseleave','.stock_ul li .img_block',function(){
+            $(this).find('.block_bg').stop().fadeOut(200)
+        })
+
+
+    $(document).ready(function(){
+        $(".height_auto").each(function(){
+            var height = $(this).height()
+            console.log(height)
+            //$(this).parent().parent().find('.text').css({height:height})
+        });
+
+    })
+
+</script>

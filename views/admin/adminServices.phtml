@@ -1,0 +1,101 @@
+<tr>
+<td class='head'>
+<?
+    $page->setTitle('Услуги | Люфари');
+    $tut = 'services';
+    include "menu.php"; 
+    $db = db :: getInstance();
+    $page->addScript('js/cookie_plag.js');
+?>
+</td>
+</tr>
+<tr>
+    <td>
+        <div class="title">Услуги</div>
+        <select style="margin:0 auto;display: block;" name="type" onchange="getservicetype(this)">
+        <?php if(isset($_COOKIE['servicetype']))
+        {
+            switch ($_COOKIE['servicetype'])
+            {
+                case '0':
+                    echo '<option selected value="0">Все</option><option value="1">Баня</option><option value="2">Хамам</option><option value="3">Мини зал</option>';
+                break;
+                case '1':
+                    echo '<option value="0">Все</option><option selected value="1">Баня</option><option value="2">Хамам</option><option value="3">Мини зал</option>';
+                break;
+                case '2':
+                    echo '<option value="0">Все</option><option value="1">Баня</option><option selected value="2">Хамам</option><option value="3">Мини зал</option>';
+                break;
+                case '3':
+                    echo '<option value="0">Все</option><option value="1">Баня</option><option value="2">Хамам</option><option selected value="3">Мини зал</option>';
+                break;
+            }
+        } else
+        {?>
+        <option value="0">Все</option><option value="1">Баня</option><option value="2">Хамам</option><option value="3">Мини зал</option>
+        <?php }?>
+        </select>
+
+        <div><a href='/admin/serviceseditor/add'>ДОБАВИТЬ УСЛУГУ</a></div>
+        <?php
+		    print '<table width="100%" class="content-services">';
+            if(isset($_COOKIE['servicetype']) AND $_COOKIE['servicetype']>0)
+            {
+                $qwery = "SELECT * FROM services WHERE type=".$_COOKIE['servicetype']." ORDER BY priority DESC";
+            }
+            else
+            {
+                $qwery = "SELECT * FROM services ORDER BY priority DESC";
+            }
+            $db -> query($qwery);
+			if($db ->getCount()>0)
+			{
+				$arr = $db -> getArray();
+                foreach($arr as $arr_index=>$arr_val)
+                {
+                    echo "<tr>";
+                        echo "<td width='20px'>";
+                            echo "<a href='/admin/serviceseditor/edit/".$arr_val['id']."'><img title='Редактировать' src='../img/admin/e.png' /></a><br /><br /><a href='/admin/serviceseditor/delete/".$arr_val['id']."'><img class='del' title='Удалить' src='../img/admin/d.png' /></a>";
+                        echo "</td>";
+                         echo "<td>";
+                            echo "<b>Название:</b> ".$arr_val['name']."<br />";
+                            echo "<b>Цена:</b> ".$arr_val['price']." грн";
+                        echo "</td>";
+                    echo "</tr>";
+                }
+			}
+			else
+			{
+				echo "<tr><td style='text-align:center;'>Записей не найдено</td></tr>";
+			}
+			print '</table>';
+        ?>
+    </td>
+</tr>
+<script type="text/javascript">
+$(function()
+{
+    $(document).on('click','.del',function()
+    {
+        var m = 'Удалить?';
+        return (confirm(m))?true:false
+    })
+
+})
+function getservicetype(th)
+{
+    var val=th.value;
+    $.cookie('servicetype',val,{secure: false});
+    $.ajax({
+        url: "views/admin/ajax/services/sort.php",
+        type: "post",
+        async: false,
+        data:{type:val},
+        success: function(data2){
+            console.log(data2)
+            $('.content-services').empty().append(data2)
+        }
+    });
+
+}
+</script>

@@ -1,0 +1,389 @@
+<?php
+$page->addScript('js/exaptionm.js','js/jquery.panorama.js','js/jquery.restbron.js','js/jquery.form.js','js/jquery.mousewheel.min.js','js/jquery-ui_1.9.1.js','js/date.js','js/jquery.panoramaelse.js','js/mask.js');
+$page->addCss('css/jquery-ui-1.9.1.css');
+$root = $_SERVER['DOCUMENT_ROOT'];
+if( $controller -> hasParam('number'))
+{
+    $id = $controller -> getParam('number');
+}
+else
+{
+    header('Location:/stock');
+}
+
+?>
+<script type="text/javascript">
+
+    jQuery(document).ready(function() {
+        jQuery('#mycarousel').jcarousel({
+            /* wrap: 'circular',*/
+
+            scroll: 2
+        });
+    });
+
+</script>
+<div class="m-b ">
+<div class="mar_40 page_stock_more">
+    <div class="mar_40 " style="margin: 0px 50px 0 50px !important;">
+<div class="cl"></div>
+<div class="af-header"></div>
+<?
+
+$sql="SELECT * FROM events WHERE visible=0 AND id=".$id;
+$db->query($sql);
+if($db->getCount()>0)
+{
+    $arr=$db->getArray();
+}
+else
+{
+    header('Location:/stock');
+}
+
+?>
+<h1 class="title" style="margin-bottom: 11px;"><?=mb_strtoupper($arr[0]['title']);?></h1>
+        <div class="clr"></div>
+<div class="after_h1 f_l">
+<?php
+$month_name_event=array('01'=>"января",'02'=> "февраля", '03'=>"марта",'04'=>"апреля",'05'=>"мая",'06'=>"июня",'07'=>"июля",'08'=>"августа",'09'=>"сентября",'10'=>"октября",'11'=>"ноября",'12'=>"декабря");
+$param_date=explode('-',$arr[0]['start_date']);
+$param_date_end=explode('-',$arr[0]['end_date']);
+if($param_date[0]==$param_date_end[0])
+{
+    print ' c '.date('d',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))]." ";
+}
+else
+{
+    print date('d',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))]." ".$param_date[0]." ";
+}
+if($arr[0]['time_start']!='00:00:00')
+{
+    $arr_evets_value_explode_time_start=explode(':',$arr[0]['time_start']);
+    print ' '.$arr_evets_value_explode_time_start[0].':'.$arr_evets_value_explode_time_start[1];
+}
+if($arr[0]['end_date']!='0000-00-00' OR $arr[0]['time_end']!='00:00:00')
+{
+    print ' по ';
+    if($arr[0]['end_date']!='0000-00-00')
+    {
+        $param_date_end=explode('-',$arr[0]['end_date']);
+        if($param_date[0]==$param_date_end[0])
+        {
+            print date('d',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))]." ".$param_date_end[0]." ";
+        }
+        else
+        {
+            print date('d',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))]." ".$param_date_end[0]." ";
+        }
+
+        if($arr[0]['time_end']!='00:00:00')
+        {
+            $arr_evets_value_explode_time_end=explode(':',$arr[0]['time_end']);
+            print ' '.$arr_evets_value_explode_time_end[0].':'.$arr_evets_value_explode_time_end[1];
+        }
+
+    }
+    else
+    {
+        if($arr[0]['time_end']!='00:00:00')
+        {
+            $arr_evets_value_explode_time_end=explode(':',$arr[0]['time_end']);
+            print $arr_evets_value_explode_time_end[0].'.'.$arr_evets_value_explode_time_end[1];
+        }
+    }
+}
+//с 3 мая 2013 г. 13:00 по 15 июня 2013 г. 20:00
+?>
+    </div>
+        <?
+        $back_url="/stock/page/";
+        $sql="SELECT * FROM events WHERE visible=0 ORDER BY start_date DESC";
+        $db->query($sql);
+        if($db->getCount()>0)
+        {
+            $arr_next=$db->getArray();
+            foreach($arr_next as $i=>$v)
+            {
+                if($v['id']==$id)
+                {
+                    if($i/6>0)
+                    {
+                        $back_url.=(((int)($i/6))+1);
+                    }
+                    else
+                    {
+                        $back_url.=((int)($i/6));
+                    }
+                    //break;
+                }
+            }
+        }
+        ?>
+        <a href="<?=$back_url;?>" class="f_r button bron-sub back_bt" style="text-decoration:none !important;margin: 0;text-align: center;width: 128px !important;color: rgb(66, 55, 9);font-size: 22px;line-height: 43px;float: right;margin-top: -70px;margin-left: 20px;display: block;">Назад</a>
+<div class="clr"></div>
+    <div class="left">
+        <div class="img">
+            <?php
+             if(file_exists($root."/img/stock/".$arr[0]['photo'].".jpg"))
+             {
+                echo '<img src="../img/stock/'.$arr[0]['photo'].'.jpg"" width="100%"/>';
+             }
+            ?>
+        </div>
+        <div class="text">
+            <?php
+            echo $arr[0]['description'];
+            ?>
+<!--            <p>Ресторан Люфари гостеприимно открывает свои двери ценителям отменной итальянской кухни и изысканных вин. Особая гордость ресторана - блюда всех регионов "Первого сада Европы", рецепты которых Шеф-повар привозит со всего мира, а также собственное производство моцареллы, пасты, лимончелло и вкуснейшей выпечки...Здесь Вы узнаете истинный характер национальной кухни и навсегда отдадите свое сердце Италии!</p>-->
+<!--            <p><i> В ресторане Люфари можно укрыться от посторонних глаз, полноценно отдохнуть, провести деловые переговоры или торжество.</i></p>-->
+<!--            <p> Легкая музыка, красивый интерьер, высокий уровень обслуживания и изысканные блюда от Шеф-повара делают любой вечер, проведенный в нем, незабываемымРесторан Люфари гостеприимно открывает свои двери ценителям отменной итальянской кухни и изысканных вин. Особая гордость ресторана - блюда всех регионов "Первого сада Европы", рецепты которых Шеф-повар привозит со всего мира, а также собственное производство моцареллы, пасты, лимончелло и вкуснейшей выпечки...Здесь Вы узнаете истинный характер национальной кухни и навсегда отдадите свое сердце Италии!</p>-->
+<!--            <p><i> В ресторане Люфари можно укрыться от посторонних глаз, полноценно отдохнуть, провести деловые переговоры или торжество.</i></p>-->
+<!--            <p> <a href="">Легкая музыкаa</a> красивый интерьер, высокий уровень обслуживания и изысканные блюда от Шеф-повара делают любой вечер, проведенный в нем, незабываемымРесторан Люфари гостеприимно открывает свои двери ценителям отменной итальянской кухни и изысканных вин. Особая гордость ресторана - блюда всех регионов "Первого сада Европы", рецепты которых Шеф-повар привозит со всего мира, а также собственное производство моцареллы, пасты, лимончелло и вкуснейшей выпечки...Здесь Вы узнаете истинный характер национальной кухни и навсегда отдадите свое сердце Италии!</p>-->
+
+        <?php
+         $sql_video="SELECT * FROM events_video WHERE md5_mictotime='".$arr[0]['photo']."'";
+        $db->query($sql_video);
+        if($db->getCount()>0)
+        {
+            $arr_video=$db->getArray();
+            foreach($arr_video as $arr_video_i=>$arr_video_v)
+            {
+                echo '<p><div><object style="width:100%;height: 360px; " wmode="transparent"><param name="wmode" value="transparent"><param name="movie" value="'.$arr_video_v['youtube'].'?version=3&amp;feature=player_detailpage;wmode=opaque"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><embed src="'.$arr_video_v['youtube'].'?version=3&amp;feature=player_detailpage;wmode=opaque" type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="100%" height="360" wmode="transparent"></object></div></p>';
+            }
+        }
+        ?>
+        </div>
+    </div>
+    <div class="right">
+        <?php
+        $next="";
+        $prev="";
+        if(count($arr_next)>0)
+        {
+            foreach($arr_next as $arr_next_i=>$arr_next_v)
+            {
+                if($arr_next_v['id']==$id)
+                {
+                    if(isset($arr_next[$arr_next_i+1]))
+                    {
+                        $prev=$arr_next[$arr_next_i+1];
+                    }
+                    if(isset($arr_next[$arr_next_i-1]))
+                    {
+                        $next=$arr_next[$arr_next_i-1];
+                    }
+                }
+            }
+        }
+        ?>
+        <?php
+        if(!empty($next))
+        {
+
+        ?>
+            <p style="font: 18px/23px arial;color: #ae8d40;margin-bottom: 10px;">Следующее событие</p>
+            <div class="block_stock">
+
+                <div class="img">
+                    <a href="/stock/more/number/<?=$next['id']?>">
+
+                        <?php
+                        $sql="SELECT * FROM banners WHERE event_id=".$next['id']." GROUP BY data_create DESC LIMIT 1";
+                        $db->query($sql);
+                        if($db->getCount()>0)
+                        {
+                            echo '<div class="block_bg "><div class="bg"></div> <div class="center"></div> </div>';
+                            $banners_next=$db->getRow();
+                            if(file_exists($root."/img/stock/".$banners_next['md5_mictotime'].".jpg"))
+                            {
+                                echo '<img src="../img/stock/'.$banners_next['md5_mictotime'].'.jpg" width="100%"/>';
+                            }
+                        }
+
+                        ?>
+
+                    </a>
+                </div>
+                <div class="text">
+                    <div class="date_text">
+                    <?
+                    $param_date=explode('-',$next['start_date']);
+                    $param_date_end=explode('-',$next['end_date']);
+                    if($param_date[0]==$param_date_end[0])
+                    {
+                        print ' c '.date('d',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))]." ";
+                    }
+                    else
+                    {
+                        print date('d',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))]." ".$param_date[0]." ";
+                    }
+                    if($next['time_start']!='00:00:00')
+                    {
+                        $arr_evets_value_explode_time_start=explode(':',$next['time_start']);
+                        print ' '.$arr_evets_value_explode_time_start[0].':'.$arr_evets_value_explode_time_start[1];
+                    }
+                    if($next['end_date']!='0000-00-00' OR $next['time_end']!='00:00:00')
+                    {
+                        print ' по ';
+                        if($next['end_date']!='0000-00-00')
+                        {
+                            $param_date_end=explode('-',$next['end_date']);
+                            if($param_date[0]==$param_date_end[0])
+                            {
+                                print date('d',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))]." ".$param_date_end[0]." ";
+                            }
+                            else
+                            {
+                                print date('d',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))]." ".$param_date_end[0]." ";
+                            }
+
+                            if($next['time_end']!='00:00:00')
+                            {
+                                $arr_evets_value_explode_time_end=explode(':',$next['time_end']);
+                                print ' '.$arr_evets_value_explode_time_end[0].':'.$arr_evets_value_explode_time_end[1];
+                            }
+
+                        }
+                        else
+                        {
+                            if($next['time_end']!='00:00:00')
+                            {
+                                $arr_evets_value_explode_time_end=explode(':',$next['time_end']);
+                                print $arr_evets_value_explode_time_end[0].'.'.$arr_evets_value_explode_time_end[1];
+                            }
+                        }
+                    }
+                    ?></div>
+                    <a href="/stock/more/number/<?=$next['id'];?>"><?=$next['title'];?></a>
+
+                </div>
+            </div>
+        <?
+        }
+        ?>
+        <?
+        if(!empty($prev))
+        {
+        ?>
+            <p style="font: 18px/23px arial;color: #ae8d40;margin-bottom: 10px;">Предыдущее событие</p>
+            <div class="block_stock">
+
+                <div class="img">
+                    <a href="/stock/more/number/<?=$prev['id']?>">
+                        <?php
+                        $sql="SELECT * FROM banners WHERE event_id=".$prev['id']." GROUP BY data_create DESC LIMIT 1";
+                        $db->query($sql);
+                        if($db->getCount()>0)
+                        {
+                            echo '<div class="block_bg "><div class="bg"></div> <div class="center"></div> </div>';
+                            $banners_next=$db->getRow();
+                            if(file_exists($root."/img/stock/".$banners_next['md5_mictotime'].".jpg"))
+                            {
+                                echo '<img src="../img/stock/'.$banners_next['md5_mictotime'].'.jpg" width="100%"/>';
+                            }
+                        }
+
+                        ?>
+                    </a>
+                </div>
+                <div class="text">
+                    <div class="date_text">
+                        <?
+                        $param_date=explode('-',$prev['start_date']);
+                        $param_date_end=explode('-',$prev['end_date']);
+                        if($param_date[0]==$param_date_end[0])
+                        {
+                            print ' c '.date('d',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))]." ";
+                        }
+                        else
+                        {
+                            print date('d',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))]." ".$param_date[0]." ";
+                        }
+                        if($prev['time_start']!='00:00:00')
+                        {
+                            $arr_evets_value_explode_time_start=explode(':',$prev['time_start']);
+                            print ' '.$arr_evets_value_explode_time_start[0].':'.$arr_evets_value_explode_time_start[1];
+                        }
+                        if($prev['end_date']!='0000-00-00' OR $prev['time_end']!='00:00:00')
+                        {
+                            print ' по ';
+                            if($prev['end_date']!='0000-00-00')
+                            {
+                                $param_date_end=explode('-',$prev['end_date']);
+                                if($param_date[0]==$param_date_end[0])
+                                {
+                                    print date('d',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))]." ".$param_date_end[0]." ";
+                                }
+                                else
+                                {
+                                    print date('d',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))]." ".$param_date_end[0]." ";
+                                }
+
+                                if($prev['time_end']!='00:00:00')
+                                {
+                                    $arr_evets_value_explode_time_end=explode(':',$prev['time_end']);
+                                    print ' '.$arr_evets_value_explode_time_end[0].':'.$arr_evets_value_explode_time_end[1];
+                                }
+
+                            }
+                            else
+                            {
+                                if($next['time_end']!='00:00:00')
+                                {
+                                    $arr_evets_value_explode_time_end=explode(':',$next['time_end']);
+                                    print $arr_evets_value_explode_time_end[0].'.'.$arr_evets_value_explode_time_end[1];
+                                }
+                            }
+                        }
+                        ?>
+                    </div>
+                    <a href="/stock/more/number/<?=$prev['id'];?>"><?=$prev['title'];?></a>
+
+                </div>
+            </div>
+        <?
+        }
+        ?>
+
+    </div>
+
+
+<div class="cl"></div>
+
+
+
+
+    </div>
+    <?php
+    $sql="SELECT * FROM preview_photo WHERE event_id=".$id." Order by preview_bool DESC";
+    $db->query($sql);
+    if($db->getCount()>0)
+    {
+        echo '<div style="position: relative;margin-top: 35px;">
+        <div class="width-h-p">
+            <ul id="mycarousel" class="page_action_carusel jcarousel-skin-tango menu-gal-restarea width-h-p" >';
+        $arr_photos=$db->getArray();
+        foreach($arr_photos as $index=>$val)
+        {
+            echo ' <li>
+                    <img alt="" class="gal" data-ajax="true" data-db="'.$id.'" data-current="'.$index.'" data-folder="img/stock-images/" src="../img/stock-images/'.$val['md5_mictotime'].'_'.$val['id'].'.jpg"/>
+                </li>';
+        }
+        echo '</ul></div></div>';
+    }
+
+    ?>
+</div>
+</div>
+
+<script>
+    $(document).on('mouseenter','.block_stock .img',function(){
+        $(this).find('.block_bg').stop().fadeIn(200)
+    }).on('mouseleave','.block_stock .img',function(){
+            $(this).find('.block_bg').stop().fadeOut(200)
+        })
+
+
+
+</script>

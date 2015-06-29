@@ -1,0 +1,260 @@
+<?php
+$page->addScript('js/exaptionm.js','js/jquery.panorama.js','js/jquery.form.js','js/jquery.mousewheel.min.js','js/jquery-ui_1.9.1.js','js/date.js','js/jquery.panoramaelse.js','js/mask.js','js/jquery.bron.js');
+$page->addCss('css/jquery-ui-1.9.1.css');
+
+?>
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        jQuery('#mycarousel').jcarousel({
+          /* wrap: 'circular',*/
+            visible: 4,
+            scroll: 2
+        });
+    });
+   /* $(function(){
+
+        if ($.browser.opera) $('.preload').css('display','none').fadeIn(600)
+        else
+            $('.preload').css('display','none').load(function(){
+                $(this).fadeIn(600)
+            })
+
+    });*/
+
+</script>
+
+
+<div class="m-b">
+<div class="mar_40" style="position: relative;overflow: hidden;">
+    <div class="cl"></div>
+    <div class="af-header"></div>
+    <h1 class="title" style="margin-bottom: 20px;">Номера Де люкс</h1>
+<div class="overflow">
+    <div class="rest-lu-block-pan-cont" style="height: 390px;">
+
+        <div class="panorama">
+
+            <div id="fo-map" class="border_gray" style="height: 400px;">
+                <div class="panorama-view">
+                    <div class="panorama-container">
+                        <img src="../img/pan/pan_gost.jpg" data-width="2612" data-height="400" data-timeout="100" class="preload position_absolute left_zero" alt="dfv" style="display:none !important"/>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="p-r" style="width: 100%;margin-top:-34px;">
+                <div style="background: url('../img/panoram_line.png') no-repeat;width:666px;margin:0 auto;height:9px;"></div>
+                <div style="width:666px;margin:0 auto;">
+                    <div class="pandelim p-r" style="left:0;"></div>
+
+                </div>
+                <div class='panline p-r width-h-p' style="margin:0 auto;height:35px;top:-54px;">
+                    <div style="width:666px;margin:0 auto;height:100%"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <?php
+    $form="delux";
+    include('lib/hotelbron.php');
+    ?>
+
+    <div class="cl"></div>
+    <div class="menu-container page_restarea" style="padding-bottom: 20px;">
+        <div class="menu-inside-container f-l" style="width: 47%;padding-right: 0;">
+            <p>Удобное расположение гостиницы «Люфари» позволит Вам быстро добраться до центра Донецка. Отсутствие загруженной автомагистрали даст возможность отдохнуть от суеты города.</p>
+            <p>Каждый из номеров имеет уникальное оформление. </p>
+            <p>Номер для молодоженов поможет романтично провести первую брачную ночь или отметить памятную годовщину Вашей свадьбы. Праздничное убранство номера создаст атмосферу любви и гармонии. </p>
+            <p>Номера оборудованы всем необходимым и удобны как для одного гостя, так и для пары.</p>
+            <p>Завтрак в номере будет началом хорошего дня.</p>
+
+
+
+
+        </div>
+        <div class="f-r"  style="position: relative;z-index: 99;margin-top: 38px;
+margin-right: 38px;">
+
+            <img class='img_prew_big gal width-h-p' data-ajax="true" data-current="0" data-folder="img/photos/hotel-room/standart/" src="../img/photos/hotel-room/standart/prew/01.jpg" width="355" height="200" alt="" />
+
+            <div class="gallery_min"  style="position: relative;z-index: 999;width: 300px;top: -44px;left: -9px;">
+                <ul id="mycarousel" class="jcarousel-skin-tango">
+                    <li><img src="../img/photos/hotel-room/standart/prew/01.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/02.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/03.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/04.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/05.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/06.jpg" width="64"  /></li>
+
+                    <li><img src="../img/photos/hotel-room/standart/prew/07.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/08.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/09.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/10.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/11.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/12.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/13.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/14.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/15.jpg" width="64"  /></li>
+                    <li><img src="../img/photos/hotel-room/standart/prew/16.jpg" width="64"  /></li>
+
+
+                </ul>
+            </div>
+        </div>
+
+        <table class="table-in-room-m-t width-h-p">
+            <tbody><tr class="room-what-in-nere">
+                <td>
+                    <div class="bed"></div><br>
+                    двуспальная<br>кровать
+                </td>
+                <td>
+                    <div class="chair"></div><br>
+                    кресло
+                </td>
+                <td>
+                    <div class="tumbochka"></div><br>
+                    тумбочка
+                </td>
+                <td>
+                    <div class="climat"></div><br>
+                    кондиционер
+                </td>
+                <td>
+                    <div class="tv"></div><br>
+                    телевизор
+                </td>
+                <td>
+                    <div class="minibar"></div><br>
+                    минибар
+                </td>
+                <td>
+                    <div class="dummer"></div><br>
+                    электрический<br>чайник
+                </td>
+                <!--td>
+                    <div class="phone"></div><br>
+                    телефон
+                </td>
+                <td>
+                    <div class="refrig"></div><br>
+                    холодильник
+                </td>-->
+                <td>
+                    <div class="safe"></div><br>
+                    сейф
+                </td>
+                <td>
+                    <div class="wifi"></div><br>
+                    Wi-Fi зона
+                </td>
+
+            </tr>
+            </tbody></table>
+
+    </div>
+
+
+
+    <div class="cl"></div>
+
+
+</div>
+    <div class="af-map"></div>
+
+
+        <ul>
+            <li class="f-l" style="width: 30%;margin-right: 5%;">
+                <div class="m-bus no_pad_left"><span>Парковка</span></div>
+                <div class="transp-tarif">
+                    На территории усадьбы предоставляется
+                    бесплатная охраняемая парковка.
+
+
+                </div>
+
+            </li>
+            <li class="f-l" style="width: 30%;margin-right: 5%;">
+                <div class="taxi no_pad_left"><span>Услуги трансфера</span></div>
+                <div class="transp-tarif" style="max-width: 360px;">
+                    <div class="transp-tarif">
+                        Для своих гостей Усадьба «Люфари» предоставляет услуги трансфера. Надежный и опытный водитель  встретит вас в аэропорту, на ж/д вокзале, либо в другом заранее указанном месте.
+                    </div>
+
+                </div>
+            </li>
+            <li class="f-l" style="width: 30%;">
+                <div class="taxi no_pad_left"><span>Аренда Автомобиля</span></div>
+                <div class="transp-tarif">
+                    <div class="transp-tarif">
+                        Возможна аренда автомобиля с водителем на все время пребывания  в командировке.
+                    </div>
+
+                </div>
+            </li>
+        </ul>
+
+        <div class="clear"></div>
+
+        <ul style="margin-top: 60px;">
+            <li class="f-l" style="width: 30%;margin-right: 5%;">
+                <div class="m-bus no_pad_left"><span>Услуги переводчика</span></div>
+                <div class="transp-tarif">
+                    В качестве дополнительных услуг можно воспользоваться услугами переводчика.
+
+
+                </div>
+
+            </li>
+            <li class="f-l" style="width: 30%;margin-right: 5%;">
+                <div class="taxi no_pad_left"><span>Экскурсии</span></div>
+                <div class="transp-tarif" style="max-width: 360px;">
+                    <div class="transp-tarif">
+                        Вы можете заказать <a href="/excursions">экскурсию по городу</a> с профессиональным экскурсоводом.
+                    </div>
+
+                </div>
+            </li>
+
+        </ul>
+
+
+    <div class="cl"></div>
+
+</div>
+</div>
+<script>
+    var width
+    $(document).ready(function(){
+        width  = $('.get_direction .right').width()
+        console.log('sdfsg')
+        console.log(width)
+    }).on('click','.get_direction .left',function(){
+            if ($(this).hasClass('active'))
+            {
+                $(this).removeClass('active')
+                $('.get_direction').stop().animate({right:-width-61},500)
+                $('.get_direction .left p').text('Забронировать');
+                $('.get_bron .img_bg').fadeOut(500)
+                setTimeout(function(){$('.get_direction').css({zIndex:99})},500)
+            }
+            else
+            {
+                $(this).addClass('active')
+                $('.get_direction').stop().animate({right:0},500)
+                $('.get_direction .left p').text("Скрыть ");
+                $('.get_bron .img_bg').fadeIn(500)
+                $('.get_direction').css({zIndex:999})
+            }
+
+        }).on('click','#mycarousel li img',function(){
+        $('.img_prew_big').attr('src', $(this).attr("src"))
+        $('.img_prew_big').attr('data-current', ($(this).parent().attr("jcarouselindex")-1))
+        console.log($(this).parent().attr("jcarouselindex")-1)
+
+    })
+</script>

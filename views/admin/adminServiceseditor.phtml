@@ -1,0 +1,225 @@
+<?php
+    $root = $_SERVER['DOCUMENT_ROOT'];
+    $page->addScript('js/admin.js','js/cookie_plag.js');
+    $db = db :: getInstance(); 
+    $action = $controller -> getParam(1);
+    $id = (int)$controller -> getParam(2);
+    
+    if ($action != 'delete' and $action != 'edit' and $action != 'add') header("Location: /admin/services");
+    if ($action == 'delete')
+    {
+        $sql="DELETE FROM services WHERE id=".$id;
+        $db->query($sql);
+        header("Location: /admin/services");
+    }
+    if ($action == 'edit')
+    {
+        $db -> query("SELECT * FROM services WHERE id = {$id}");
+        $product = $db -> getRow();
+        if (!$product) header("Location: /admin/services");  
+    }
+    else $action = 'add';  
+?>
+<tr>
+<td class='head'>
+<?php
+    $tut = 'services';
+    include "menu.php";
+?>
+</td>
+</tr>
+<tr>
+    <td>
+        <div class="back"><a href="/admin/services">НАЗАД</a></div>
+        <div class="title"><?=($action == 'add')?'Добавление':'Редактирование';?> услуги</div>
+        <?php ($action == 'add')?$page->setTitle('Добавление услуги'):$page->setTitle('Редактирование услуги');?> 
+        <?php  
+        $mass_rez=array();
+        if($action=='edit')
+        {
+            $sql_where_id='SELECT * FROM services WHERE id='.$id;
+            $db->query($sql_where_id);
+        	if($db->getCount()>0)
+        	{
+    		    $mass_rez=$db->getArray();
+            }
+        }
+		echo "<form name='form' id='editForm' method='post' enctype='multipart/form-data'>";
+        echo "<fieldset>";
+	    echo "<table>";
+		//----------
+        if($action=='edit')
+        {
+            echo "<tr>";
+    	    echo "<td class='hidden'>";
+    		echo "<input type='hidden' class='hidden' name='id' value='".$id."'>";
+    		echo "</td>";
+    		echo "</tr>";
+        }
+        echo "<tr>";
+        echo "<td>Выберите тип услуги</td>";
+        echo "<td>";
+	    echo "<select name='type' onchange='getservicetype(this)'>";
+        if($action=='edit')
+        {
+            switch($mass_rez[0]['type'])
+            {
+                case 0:
+                    echo '<option selected value="0">Все</option><option value="1">Баня</option><option value="2">Хамам</option><option value="3">Мини зал</option>';
+                    break;
+                case 1:
+                    echo '<option value="0">Все</option><option selected value="1">Баня</option><option value="2">Хамам</option><option value="3">Мини зал</option>';
+                    break;
+                case 2:
+                    echo '<option value="0">Все</option><option value="1">Баня</option><option selected value="2">Хамам</option><option value="3">Мини зал</option>';
+                    break;
+                case 3:
+                    echo '<option value="0">Все</option><option value="1">Баня</option><option value="2">Хамам</option><option selected value="3">Мини зал</option>';
+                    break;
+            }
+        }
+        else
+        {
+            if(isset($_COOKIE['servicetype']))
+            {
+                switch($_COOKIE['servicetype'])
+                {
+                    case 0:
+                        echo '<option selected value="0">Все</option><option value="1">Баня</option><option value="2">Хамам</option><option value="3">Мини зал</option>';
+                        break;
+                    case 1:
+                        echo '<option value="0">Все</option><option selected value="1">Баня</option><option value="2">Хамам</option><option value="3">Мини зал</option>';
+                        break;
+                    case 2:
+                        echo '<option value="0">Все</option><option value="1">Баня</option><option selected value="2">Хамам</option><option value="3">Мини зал</option>';
+                        break;
+                    case 3:
+                        echo '<option value="0">Все</option><option value="1">Баня</option><option value="2">Хамам</option><option selected value="3">Мини зал</option>';
+                    break;
+                }
+            }
+            else
+            {
+                echo '<option selected value="0">Все</option><option value="1">Баня</option><option value="2">Хамам</option><option value="3">Мини зал</option>';
+            }
+        }
+
+        echo "</select>";
+        echo "</td>";
+        echo "</tr>";
+         //---------------------------------visible
+        echo "<tr>";
+        echo "<td>Отображается на сайте</td>";
+        $checked_vis=($mass_rez[0]['invisible']==0)?"checked='checked'":"";
+        echo "<td><input type='checkbox' class='float_left' name='invisible' {$checked_vis}></td>";
+        echo "</tr>";
+        //------------------------------------
+        //---------------------------------name
+        echo "<tr>";
+        echo "<td>Название услуги</td>";
+        echo "<td><input type='text' class='float_left input_title_style' name='name' value='".$mass_rez[0]['name']."'></td>";
+        echo "</tr>";
+        //---------------------------------name-eng
+        //echo "<tr>";
+        //echo "<td>Название услуги (английское)</td>";
+       // echo "<td></td>";
+       // echo "</tr>";
+        //------------------------------------
+
+   
+echo "<tr>";
+echo "<td>Описание</td>";
+echo "<td>";
+
+$editorClass = new editorClass();
+
+$description = $editorClass->replaceToDraw($mass_rez[0]['description']);
+
+$editorClass->drawEditor('description', $description);
+
+echo "</td>";
+echo "</tr>";
+//------------------------
+//echo "<tr>";
+//echo "<td>Oписание (английское)</td>";
+//echo "<td>";
+//$editorClass = new editorClass();
+//$description = $editorClass->replaceToDraw($mass_rez[0]['description_eng']);
+//$editorClass->drawEditor('description_eng', $description);
+//echo "</td>";
+//echo "</tr>";
+//------------------------------------
+echo "<tr>";
+echo "<td>Цена</td>";
+echo "<td><input type='text' class='float_left input_title_style onlynumbers' name='price' value='".$mass_rez[0]['price']."'></td>";
+echo "</tr>";
+//------------------------------------
+echo "<tr>";
+echo "<td>Приоритет</td>";
+echo "<td><input type='text' class='float_left input_title_style onlynumbers' name='priority' value='".$mass_rez[0]['priority']."'></td>";
+echo "</tr>";
+
+//------------------------------------
+echo "<tr>";
+echo "<td colspan='2' class='hidden'>";
+echo '<input type="submit" class="btnSave" name="edit" value="Сохранить" id="edit" />';
+echo "</td>";
+echo "</tr>";
+//------------------------------------
+echo "</table>";
+echo "</form>";
+        ?>
+    </td>
+  </tr>
+<script type="text/javascript">
+function getservicetype(th)
+{
+    var val=th.value;
+    //$.cookie('servicetype',val,{secure: false});
+}
+var optionsUpdate = {
+        url:    "views/admin/ajax/services/save.php",
+        beforeSubmit: function(jqForm) {
+            console.log(jqForm)
+        },
+        success: function(responseText) { 
+            console.log(responseText);
+            var m = 'Услуга сохранена!\nНажмите:\n   OK - для возврата ко всем услугам.\n   Отмена - продолжить редактирование этой услуги.';
+            if (responseText.indexOf("error") == -1) {
+                 if (confirm(m)) 
+                    {
+                        location.href='/admin/services';
+                    }
+                    else
+                    {
+                        location.href=location.href;
+                    }
+                }
+                else
+                {
+                	alert(responseText.replace(/<.*?>/g, ''));	
+                }
+            return false;
+        }
+    };
+    $('#editForm').live('submit',function() { 
+        $(this).ajaxSubmit(optionsUpdate); 
+        return false;
+
+    });
+    $('.onlynumbers').on('contextmenu',function()
+    {
+        return false;
+    })
+    $(document).bind('keyup keydown keypress paste',function(e){onlynumbers(e)});
+    function onlynumbers(ev)
+    {
+        if(ev.keyCode!=37 && ev.keyCode!=38 && ev.keyCode!=40 && ev.keyCode!=39)
+        {
+            $('.onlynumbers').map(function(){
+            var numbers = $(this).val().replace(/[^\d.]/g, "");
+            $(this).val(numbers);
+            })
+        }
+    }
+</script>

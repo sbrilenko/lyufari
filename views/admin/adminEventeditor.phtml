@@ -1,0 +1,722 @@
+<?php
+    $root = $_SERVER['DOCUMENT_ROOT'];
+    $page->addScript('js/admin.js','js/date.js','js/jquery.Jcrop.min.js');
+    $page->addCss('css/jquery.Jcrop.min.css');
+    $db = db :: getInstance(); 
+    $action = $controller -> getParam(1);
+    $id = (int)$controller -> getParam(2);
+    
+    if ($action != 'delete' and $action != 'edit' and $action != 'add') header("Location: /admin/event");
+    if ($action == 'delete')
+    {
+        $sql="SELECT photo FROM events WHERE id=".$id;
+        $db->query($sql);
+        if($db->getCount()>0)
+        {
+            $md5=$db->getValue();
+            $sql_del_pre="DELETE FROM events_video WHERE md5_mictotime='".$md5."'";
+            $db->query($sql_del_pre);
+        }
+        
+        $sql="SELECT * FROM preview_photo WHERE event_id=".$id;
+        $db->query($sql);
+        if($db->getCount()>0)
+        {
+            $arr_pre=$db->getArray();
+            foreach($arr_pre as $arr_pre_index=>$arr_preval)
+            {
+                 if(file_exists($root.'/img/stock-images/size1/'.$arr_preval['md5_mictotime'].'_'.$arr_preval['id'].'.jpg'))
+    						{
+    							unlink($root.'/img/stock-images/size1/'.$arr_preval['md5_mictotime'].'_'.$arr_preval['id'].'.jpg');
+    						}
+    				 if(file_exists($root.'/img/stock-images/size2/'.$arr_preval['md5_mictotime'].'_'.$arr_preval['id'].'.jpg'))
+    						{
+    							unlink($root.'/img/stock-images/size2/'.$arr_preval['md5_mictotime'].'_'.$arr_preval['id'].'.jpg');
+    						}
+    				 if(file_exists($root.'/img/stock-images/size3/'.$arr_preval['md5_mictotime'].'_'.$arr_preval['id'].'.jpg'))
+    						{
+    							unlink($root.'/img/stock-images/size3/'.$arr_preval['md5_mictotime'].'_'.$arr_preval['id'].'.jpg');
+    						}
+                      if(file_exists($root.'/img/stock-images/'.$arr_preval['md5_mictotime'].'_'.$arr_preval['id'].'.jpg'))
+    						{
+    							unlink($root.'/img/stock-images/'.$arr_preval['md5_mictotime'].'_'.$arr_preval['id'].'.jpg');
+    						}
+                $sql_del_pre="DELETE FROM preview_photo WHERE id=".$arr_preval['id'];
+                $db->query($sql_del_pre);
+            }
+        }
+        //delete baner
+        $sql_delete_ban="SELECT * FROM banners WHERE event_id=".$id;
+        $db->query($sql_delete_ban);
+        if($db->getCount()>0)
+        {
+            $arr_baners=$db->getArray();
+            if(file_exists($root.'/img/stock/'.$arr_baners[0]['md5_mictotime'].'.jpg'))
+    						{
+    							unlink($root.'/img/stock/'.$arr_baners[0]['md5_mictotime'].'.jpg');
+    						}
+            $sql_delete_ban_db="DELETE FROM banners WHERE id=".$arr_baners[0]['id'];
+            $db->query($sql_delete_ban_db);
+        }
+        //record event
+        $sql_delete_db_event="DELETE FROM events WHERE id=".$id;
+        $db->query($sql_delete_db_event);
+        header("Location: /admin/event");
+        exit();
+    }
+    
+    if ($action == 'edit')
+    {
+        $db -> query("SELECT * FROM events WHERE id = {$id}");
+        $product = $db -> getRow();
+        if (!$product) header("Location: /admin/event");  
+    }
+    else $action = 'add';  
+?>
+<tr>
+<td class='head'>
+<?php
+    $tut = 'events';
+    include "menu.php"; 
+?>
+</td>
+</tr>
+<tr>
+    <td>
+        <div class="back"><a href="/admin/event">НАЗАД</a></div>
+        <div class="title"><?=($action == 'add')?'Добавление':'Редактирование';?> события</div>
+        <?php ($action == 'add')?$page->setTitle('Добавление события'):$page->setTitle('Редактирование события');?> 
+        <?php  
+        if($action=='edit')
+        {
+            $sql_where_id='SELECT * FROM events WHERE id='.$id;
+            $db->query($sql_where_id);
+        	if($db->getCount()>0)
+        	{
+    		    $mass_rez=$db->getArray();
+    			//удаляем сразу все preview которые остались с прошлого раза, если они есть
+    			$sql_select_all_zero_previews_photo_where_md5_mass_rez_photo='SELECT * FROM preview_photo WHERE md5_mictotime="'.$mass_rez[0]['photo'].'" AND event_id=0';
+    			$db->query($sql_select_all_zero_previews_photo_where_md5_mass_rez_photo);
+    			if($db->getCount()>0)
+    			{
+    				$arr=$db->getArray();
+    				foreach($arr as $index=>$value)
+    				{
+    					 if(file_exists($root.'/img/stock-images/size1/'.$value['md5_mictotime'].'_'.$value['id'].'.jpg'))
+    						{
+    							unlink($root.'/img/stock-images/size1/'.$value['md5_mictotime'].'_'.$value['id'].'.jpg');
+    						}
+    				 if(file_exists($root.'/img/stock-images/size2/'.$value['md5_mictotime'].'_'.$value['id'].'.jpg'))
+    						{
+    							unlink($root.'/img/stock-images/size2/'.$value['md5_mictotime'].'_'.$value['id'].'.jpg');
+    						}
+    				 if(file_exists($root.'/img/stock-images/size3/'.$value['md5_mictotime'].'_'.$value['id'].'.jpg'))
+    						{
+    							unlink($root.'/img/stock-images/size3/'.$value['md5_mictotime'].'_'.$value['id'].'.jpg');
+    						}
+    				}
+    				//теперь записи из базы
+    				$sql_delete_zero_records='DELETE FROM preview_photo WHERE event_id=0 AND md5_mictotime="'.$mass_rez[0]['photo'].'"';
+    		        $db->query($sql_delete_zero_records);
+    			}
+            }
+        }
+        else
+        {
+            $mass_rez=array();
+        }
+	
+    	
+			echo "<form name='form' id='editForm' method='post' enctype='multipart/form-data'>";
+            echo "<fieldset>";
+		   		    echo "<table>";
+		   		    //-----------------достаем если есть имя фотки из banners
+		   		    echo "<tr>";
+		   		    echo "<td class='hidden'>";
+					if($mass_rez[0]['photo']!='')
+					{
+						echo "<input type='hidden' name='temp' value='".$mass_rez[0]['photo']."'>";
+					}
+					else
+					{
+						echo "<input type='hidden' name='temp' value='".md5(microtime())."'>";
+					}
+					echo "</td>";
+					echo "</tr>";
+					//----------
+		   		    echo "<tr>";
+		   		    echo "<td class='hidden'>";
+					echo "<input type='hidden' class='hidden' name='id' value='".$id."'>";
+					echo "</td>";
+					echo "</tr>";
+         //---------------------------------visible
+        echo "<tr>";
+        echo "<td>Отображается на сайте</td>";
+        $checked_vis=($mass_rez[0]['visible']==0)?"checked='checked'":"";
+        echo "<td><input type='checkbox' class='float_left' name='visible' {$checked_vis}></td>";
+        echo "</tr>";
+        //------------------------------------
+        //---------------------------------title
+        echo "<tr>";
+        echo "<td>Название события</td>";
+        echo "<td><input type='text' class='float_left input_title_style' name='title' id='title' value='".$mass_rez[0]['title']."'></td>";
+        echo "</tr>";
+        //------------------------------------
+
+    echo "<tr>";
+	echo "<td>Дата начала</td>";
+	echo "<td style='text-align:left;'>";
+    if(!empty($mass_rez[0]['start_date']))
+    {
+        $start_date=explode('-',$mass_rez[0]['start_date']);
+        $start_date=$start_date[2].".".$start_date[1].".".$start_date[0];
+    }
+    else
+    {
+        $start_date="";
+    }
+	echo "<input  class='date_begin date' input type='text' readonly='readonly' id='datepicker' name='datepicker' value='".$start_date."'><span class='style_ne_obyazat_pole'><span class='time_start'> Время начала </span><div class='float_right' style='padding: 2px;font-size: 10px;width:192px;color:#97978D;'>Дата которая будет отображаться на странице</div>";
+	if($mass_rez[0]['time_start_zero']!=0)
+	{
+		$time_start=explode(':',$mass_rez[0]['time_start']);
+	}
+	print "<select id='time_start_hour' name='time_start_hour'>";
+			for($i=-1;$i<=23;$i++)
+			{
+				if($i==-1)
+				{
+					print "<option value='-1'>--</option>";
+				}
+				else
+				{
+						if($i<10)
+						{
+							$null='0';
+						}
+						else
+						{
+							$null='';
+						}
+						if($null.$i==$time_start[0])
+						{
+							print "<option value='".$null.$i."' selected='selected'>".$null.$i."</option>";
+						}
+						else print "<option value='".$null.$i."'>".$null.$i."</option>";
+				}
+				
+			}
+		
+	print "</select> : ";
+	print "<select id='time_start_min' name='time_start_min'>";
+					print "<option value='-1'>--</option>";
+					($time_start[1]=='00') ? $selected_strat_time_min='selected="selected"' : $selected_strat_time_min='';
+					print "<option value='00' ".$selected_strat_time_min.">00</option>";
+					($time_start[1]=='15') ? $selected_strat_time_min='selected="selected"' :$selected_strat_time_min='';
+					print "<option value='15' ".$selected_strat_time_min.">15</option>";	
+					($time_start[1]=='30') ? $selected_strat_time_min='selected="selected"' : $selected_strat_time_min='';
+					print "<option value='30' ".$selected_strat_time_min.">30</option>";	
+					($time_start[1]=='45') ? $selected_strat_time_min='selected="selected"': $selected_strat_time_min='';
+					print "<option value='45' ".$selected_strat_time_min.">45</option>";	
+	print "</select></span><span class='color_ne_obyazat_pole'> ".$text_ne_objazat_polya."</span>";
+	echo "</td>";
+echo "</tr>";
+//-------------------------------
+echo "<tr border='1'>";
+	echo "<td>Дата окончания</td>";
+	echo "<td class='text_align_left'>";
+	if($mass_rez[0]['end_date']=='0000-00-00' OR empty($mass_rez[0]['end_date']))
+    {
+      $end_date='';   
+    }
+    else
+    {
+        $end_date=explode('-',$mass_rez[0]['end_date']);
+        $end_date=$end_date[2].".".$end_date[1].".".$end_date[0];
+    }
+	echo "<span class='style_ne_obyazat_pole2'><input class='date_begin date' input type='text' readonly='readonly' id='datepicker2' name='datepicker2' value='".$end_date."'> <img id='remove_end' class='button_clear_date_end' src='img/admin/remove.png'/ title='удалить дату окончания' /> Время окончания";
+	if($mass_rez[0]['time_end_zero']!=0)
+	{
+		$time_end=explode(':',$mass_rez[0]['time_end']);
+	}
+print "<select id='time_end_hour' name='time_end_hour'>";
+			for($i=-1;$i<=23;$i++)
+			{
+				if($i==-1)
+				{
+					print "<option value='-1'>--</option>";
+				}
+				else
+				{
+						if($i<10)
+						{
+							$null='0';
+						}
+						else
+						{
+							$null='';
+						}
+						if($null.$i==$time_end[0])
+						{
+							print "<option value='".$null.$i."' selected='selected'>".$null.$i."</option>";
+						}
+						else print "<option value='".$null.$i."'>".$null.$i."</option>";
+				}
+				
+			}
+	print "</select> : ";
+	print "<select id='time_end_min' name='time_end_min'>";
+				print "<option value='-1'>--</option>";
+				    ($time_end[1]=='00') ? $selected_end_time_min='selected="selected"' : $selected_end_time_min='';
+					print "<option value='00' ".$selected_end_time_min.">00</option>";	
+					($time_end[1]=='15') ? $selected_end_time_min='selected="selected"' : $selected_end_time_min='';
+					print "<option value='15' ".$selected_end_time_min.">15</option>";	
+				    ($time_end[1]=='30') ? $selected_end_time_min='selected="selected"' : $selected_end_time_min='';
+					print "<option value='30' ".$selected_end_time_min.">30</option>";	
+					($time_end[1]=='45') ? $selected_end_time_min='selected="selected"' : $selected_end_time_min='';
+					print "<option value='45' ".$selected_end_time_min.">45</option>";		
+	print "</select></span><span class='color_ne_obyazat_pole'> ".$text_ne_objazat_polya."</span><div id='format_date' class='float_right' style='padding:2px;font-size: 10px;width:192px;color:#97978D;'>";
+	$month_name_event=array('01'=>"января",'02'=> "февраля", '03'=>"марта",'04'=>"апреля",'05'=>"мая",'06'=>"июня",'07'=>"июля",'08'=>"августа",'09'=>"сентября",'10'=>"октября",'11'=>"ноября",'12'=>"декабря");
+                if($action=='edit')
+                {
+                 $param_date=explode('-',$mass_rez[0]['start_date']);
+	             $param_date_end=explode('-',$mass_rez[0]['end_date']);
+				 if($param_date[0]==$param_date_end[0])
+				 {
+				 	print ' c '.date('d',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))]." ";
+				 }
+				 else
+				 {
+				 	print date('d',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date[1],$param_date[2],$param_date[0]))]." ".$param_date[0]."г";
+				 }
+				 if($mass_rez[0]['time_start']!='00:00:00')
+				 {
+				 	$arr_evets_value_explode_time_start=explode(':',$mass_rez[0]['time_start']);
+				 	print ' '.$arr_evets_value_explode_time_start[0].':'.$arr_evets_value_explode_time_start[1];
+				 }
+			if($mass_rez[0]['end_date']!='0000-00-00' OR $mass_rez[0]['time_end']!='00:00:00')
+			{
+				print ' до ';
+				if($mass_rez[0]['end_date']!='0000-00-00')
+				{
+					 $param_date_end=explode('-',$mass_rez[0]['end_date']);
+					 if($param_date[0]==$param_date_end[0])
+					 {
+					 	print date('d',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))]." ".$param_date_end[0]."г";
+					 }
+					 else
+					 {
+					 	print date('d',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))." ".$month_name_event[date('m',mktime(0,0,0,$param_date_end[1],$param_date_end[2],$param_date_end[0]))]." ".$param_date_end[0]."г";
+					 }
+					 
+					 if($mass_rez[0]['time_end']!='00:00:00')
+					 {
+					 	 $arr_evets_value_explode_time_end=explode(':',$mass_rez[0]['time_end']);
+						 print ' '.$arr_evets_value_explode_time_end[0].':'.$arr_evets_value_explode_time_end[1];
+					 }
+					
+				}
+				else
+				{
+					 if($mass_rez[0]['time_end']!='00:00:00')
+					 {
+					 	 $arr_evets_value_explode_time_end=explode(':',$mass_rez[0]['time_end']);
+						 print $arr_evets_value_explode_time_end[0].'.'.$arr_evets_value_explode_time_end[1];
+					 }
+				}
+			}
+                }
+			
+	echo "</td>";
+echo "</tr>";
+//------------------------
+echo "<tr>";
+echo "<td>Краткое описание</td>";
+echo "<td>";
+
+$editorClass = new editorClass();
+
+$description = $editorClass->replaceToDraw($mass_rez[0]['description']);
+$editorClass->drawEditorSelectButton('description', $description,false,true,true);
+//$editorClass->drawEditor('description', $description);
+
+echo "</td>";
+echo "</tr>";
+//------------------------
+//echo "<tr>";
+//echo "<td>Краткое описание *</td>";
+//echo "<td>";
+//
+//$editorClass = new editorClass();
+//
+//$description = $editorClass->replaceToDraw($mass_rez[0]['description_star']);
+//
+//$editorClass->drawEditor('description_star', $description);
+//
+//echo "</td>";
+//echo "</tr>";
+//------------------------------------
+echo "<tr>";
+    echo "<td>Видео с youtube</td>";
+    echo "<td>";
+    echo "<input type='text' style='float:left;width:500px;' name='youtube' id='youtube' value=''>";
+   	echo "<input type='button' id='load_video' style='float:left;' value='Загрузить видео'>";
+    echo "</td>";
+echo "</tr>";
+
+echo "<tr>";
+echo "<td class='hidden'></td>";
+
+echo "<td class='hidden'>";
+    echo "<div id='youtubevideo'>";
+    $sql_getvideo="SELECT * FROM events_video WHERE md5_mictotime='".$mass_rez[0]['photo']."' ORDER BY data_create DESC LIMIT 1";
+    $db->query($sql_getvideo);
+    if($db->getCount()>0)
+    {
+            $video=$db->getArray();
+        	print '<object style="width: 250px;height: 150px;float:left; " wmode="transparent"><param name="wmode" value="transparent" /><param name="movie" value="'.$video[0]['youtube'].'?version=3&feature=player_detailpage"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><embed src="'.$video[0]['youtube'].'?version=3&feature=player_detailpage" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="250" height="150" wmode="transparent"></object>';
+			print '<div class="edit_image_controll_button">
+				   <span data-id="'.$video[0]['id'].'" class="del_video"> <img src="img/admin/d.png" alt="Удалить" title="Удалить"></span>';
+		    print '</div>';
+			print '<div style="height:15px;clear:both;"></div>';
+    }
+    echo "</div>";
+echo "</td>";
+echo "</tr>";
+
+echo "<tr>";
+echo "<td>Банер";
+echo "<div class='help'>";
+echo 'Баннер должен быть 720*360 пикселей, только png или jpg. Выделите область на новой загруженной картинке и нажмите кнопку "Сохранить"';
+echo "</div>";
+
+echo "</td>";
+echo "<td class='text_align_left'>";
+        echo '<input type="hidden" name="cx" value=""><input type="hidden" name="cy" value=""><input type="hidden" name="cx2" value=""><input type="hidden" name="cy2" value=""><input type="hidden" name="ch" value=""><input type="hidden" name="cw" value="">';
+   echo "<input type='file'  name='image' accept='image/jpg'> ";
+   echo "<input type='submit' id='load_image' value='Загрузить'>";
+
+   echo "<span id='img_loader_photo'></span>";
+echo "</td>";
+echo "</tr>";
+echo "<tr style='text-align:left;'>";
+    echo "<td class='hidden'></td>";
+	echo "<td class='hidden' id='loaded_image'>";
+		if(!empty($mass_rez[0]['photo']))
+			{
+				print "<div style='height:100px;float:left;'><div style='clear:both;'></div><img style='width:150px;height:100px;margin-left:7px;' src='/img/stock/".$mass_rez[0]['photo'].".jpg'/></div>";
+			}
+
+	echo "</td>";
+echo "</tr>";
+//-----------------------------------фотоотчет
+echo "<tr>";
+echo "<td>Фотоотчет";
+echo "<div class='help'>";
+echo 'Фотографии должны быть по высоте не меньше 720 пикселей, только jpg. Сохраняется после нажатия кнопки "Сохранить". Групповая загрузка';
+echo "</div>";
+
+echo "</td>";
+echo "<td class='text_align_left'>";
+   echo "<input type='file'  name='image_preview[]' multiple='' accept='image/jpg'> ";
+   	echo "<input type='submit' id='load_image_preview' value='Загрузить'>";
+	echo "<span id='img_loader_photo_preview'></span>";
+echo "</td>";
+echo "</tr>";
+echo "<tr>";
+    echo "<td class='hidden'></td>";
+	echo "<td class='hidden' id='loaded_image_preview'>";
+	//если фоток в галереи =3 а отмеченнх <3 то ставим всем  preview_bool=1
+	//сколько всего фоток 
+	$sql_select_all_preview_photo='SELECT COUNT(id) FROM preview_photo WHERE md5_mictotime="'.$mass_rez[0]['photo'].'" AND event_id<>0';
+	$db->query($sql_select_all_preview_photo);
+	$all_preview_photo=$db->getValue();
+    //сколько отмеченых галочкой
+    $sql_select_all_preview_photo_preview_bool_0='SELECT COUNT(id) FROM preview_photo WHERE md5_mictotime="'.$mass_rez[0]['photo'].'" AND event_id<>0 AND preview_bool=1';
+	$db->query($sql_select_all_preview_photo_preview_bool_0);
+	$all_preview_photo_checked=$db->getValue();
+	if($all_preview_photo==3 AND $all_preview_photo_checked<$all_preview_photo)
+	{
+		//всем приствоить preview_bool=1
+		$sql_all_update_set_preview_bool_1='UPDATE preview_photo SET preview_bool=1 WHERE md5_mictotime="'.$mass_rez[0]['photo'].'"';
+		$db->query($sql_all_update_set_preview_bool_1);
+	}
+	//достаем все фотки к этому md5
+$sql_select_all_preview_photo='SELECT * FROM preview_photo WHERE md5_mictotime="'.$mass_rez[0]['photo'].'" AND event_id<>0';
+$db->query($sql_select_all_preview_photo);
+if($db->getCount()>0)
+{
+	$arr=$db->getArray();
+	foreach($arr as $index=>$value)
+	{
+		print '<img class="edit_image img" src="/img/stock-images/size1/'.$value['md5_mictotime'].'_'.$value['id'].'.jpg">';
+		print '<div class="edit_image_controll_button">
+			   <span class="delphotoprev" data-id="'.$value['id'].'"> <img src="img/admin/d.png" alt="Удалить" title="Удалить"></span>';
+		//($value['preview_bool']==0) ? $checked='' :  $checked='checked="checked"';
+		//print '<input type="checkbox" id="preview_'.$value['id'].'" name="preview_'.$value['id'].'" title="Поставить в превью" '.$checked.'></div>';
+        echo '</div>';
+	}
+}
+	echo "</td>";
+echo "</tr>";
+//------------------------------------
+echo "<tr>";
+echo "<td colspan='2' class='hidden'>";
+echo '<input type="submit" class="btnSave" name="edit" value="Сохранить" id="edit" />';
+echo "</td>";
+echo "</tr>";
+//------------------------------------
+echo "</table>";
+echo "</form>";
+        ?>
+    </td>
+  </tr>
+  <script type="text/javascript">
+   var special_cookie='';
+	 var optionsUpdate = {
+        url:    "views/admin/ajax/events/save.php",
+        beforeSubmit: function(jqForm) { 
+        	            console.log(jqForm);
+        	            //return false;
+        				var endDateArray;
+		     			var endDate;
+		     			var startDateArray;
+		     			var startDate;
+     				    //$('form#editForm input[type=file]').attr('disabled','disabled');
+		     			endDateArray = $("#datepicker2").val().split("-");
+		     			endDate = new Date(endDateArray[0],endDateArray[1],endDateArray[2]);
+		     			startDateArray = $("#datepicker").val().split("-");
+		     			startDate = new Date(startDateArray[0],startDateArray[1],startDateArray[2]);
+     			
+     			if (endDate<startDate) {
+     				alert("Дата окончания события не может быть раньше даты начала события!");
+     				return false;
+     			    }
+            $('form#editForm input[type=file]').attr('disabled',true);
+        },
+        success: function(responseText) {
+            console.log(responseText)
+            var m = 'Событие сохранено!\nНажмите:\n   OK - для возврата ко всем событиям.\n   Отмена - продолжить редактирование этого события.';
+            if (responseText.indexOf("red") == -1) {
+                 if (confirm(m)) 
+                    {
+                        location.href='/admin/event';
+                    }
+                    else
+                    {
+                        location.href=location.href;
+                    }
+                }
+                else
+                {
+                	$('form#editForm input[type=file]').attr('disabled',false);
+                	alert(responseText.replace(/<.*?>/g, ''));	
+                }
+           
+            $('form#form input[type=file]').attr('disabled',false)
+            return false;
+
+          
+        }
+    };
+    // привязываем событие submit к форме
+
+    $('#editForm').live('submit',function() { 
+        $(this).ajaxSubmit(optionsUpdate); 
+        return false;
+
+    });
+   $('#time_start_hour, #time_start_min, #time_end_hour,#time_end_min').change(function() {
+			onchange();
+	});
+    function onchange()
+    {
+    	var date_begin_=$('#datepicker').val();
+    	var date_end_=$('#datepicker2').val();
+    	var time_start_hour_=$('#time_start_hour').val();
+    	var time_start_min_=$('#time_start_min').val();
+    	var time_end_hour_=$('#time_end_hour').val();
+    	var time_end_min_=$('#time_end_min').val();
+    	$.ajax({
+    	  	  url: 'views/admin/ajax/events/date_online.php',
+    	  	  type: "POST",
+    	  	  data: { date_begin: date_begin_, date_end:  date_end_, time_start_hour: time_start_hour_,time_start_min:time_start_min_,time_end_hour:time_end_hour_,time_end_min:time_end_min_},
+			  success: function(data) {
+			     console.log(data);
+			  $('#format_date').replaceWith('<div id="format_date" class="float_right" style="padding:2px;font-size: 10px;width:192px;color:#97978D;">'+data+'</div>')
+			  //console.log(data);
+	    }
+		});
+    }
+      $(document).on('click','#load_video',function()
+     {
+       var savevideo = {
+       url:    "views/admin/ajax/events/savevideo.php",
+        beforeSubmit: function(jqForm) {
+        },
+        success: function(responseText) { 
+          if (responseText.indexOf("red") == -1) {
+          	     $('#youtubevideo').replaceWith('<div id="youtubevideo">'+responseText+'</div>')
+        }
+    }};
+        $('form').ajaxSubmit(savevideo); 
+        return false;
+     }).on('click','#load_image_preview',function ()
+        {
+   	    var optionsUpdate2 = {
+        url:    "views/admin/ajax/events/save_preview.php",
+        beforeSubmit: function(jqForm) { 
+        	temp2=jqForm[0].value;
+        	$('input[type=submit],input#load_image,input#load_image_preview').attr('disabled','disabled');
+        	$('#img_loader_photo_preview').replaceWith("<span id='img_loader_photo_preview'><img style='margin-bottom:5px;' src='../img/admin/l.gif'/>Подождите идет загрузка фото</div>");
+        },
+        success: function(responseText) { 
+        		$('#img_loader_photo_preview').replaceWith("<span id='img_loader_photo_preview'></span>");
+        	 if (responseText.indexOf("red") == -1) { 
+        	 	 $('#loaded_image_preview').replaceWith('<td id="loaded_image_preview">'+responseText+'</td>'); 
+        	 	 }
+            else
+            {
+            	alert(responseText.replace(/<.*?>/g, ''));
+            }
+            $('input[type=submit],input#load_image,input#load_image_preview').attr('disabled',false);
+        }
+    };
+
+        $("#editForm").ajaxSubmit(optionsUpdate2); 
+        return false;
+   }).on('click','#load_image',function ()
+   {
+       var boundx,boundy;
+   	    var optionsUpdate2 = {
+        url:    "views/admin/ajax/events/save_banner.php",
+        beforeSubmit: function(jqForm) { 
+        	temp=jqForm[0].value;
+           
+        	$('input[type=submit],input#load_image,input#load_image_preview').attr('disabled','disabled');
+        	$('#img_loader_photo').replaceWith("<span id='img_loader_photo'><img style='margin-bottom:5px;' src='../img/admin/l.gif'/> Подождите идет загрузка фото</div>");
+        },
+        success: function(responseText) { 
+        	$('#img_loader_photo').replaceWith("<span id='img_loader_photo'></span>");
+        	 if (responseText.indexOf("red") == -1 && responseText!='') {
+                 responseText= $.parseJSON(responseText)
+                 console.log(responseText)
+
+        	 	 $('#loaded_image').replaceWith('<td id="loaded_image"><img src="'+responseText['path']+'" style="width:720px;height:360px;"/></td>');
+                 var $pimg = $('#loaded_image img')
+                 var $pcnt = $('#loaded_image')
+                 console.log($pcnt)
+                    var min_x=720*720/responseText['w']
+                    var min_y=360*360/responseText['h']
+                    console.log(min_x,min_y)
+                     $('#loaded_image img').Jcrop({
+                     onSelect: showCoords,
+                     onChange: updatePreview,
+                     //onSelect: updatePreview,
+                     aspectRatio: min_x / min_y,
+                     minSize: [min_x, min_y],
+                     setSelect: [ 0, 0, min_x, min_y ]
+                 },function(){
+                     // Use the API to get the real image size
+                     var bounds = this.getBounds();
+                     boundx = bounds[0];
+                     boundy = bounds[1];
+                     // Store the API in the jcrop_api variable
+                     jcrop_api = this;
+
+                     // Move the preview into the jcrop container for css positioning
+                     //$preview.appendTo(jcrop_api.ui.holder);
+//                     $('.jcrop-preview').attr('src',$('#imgLoaded').attr('src'))
+//                     $('.jcrop-tracker').trigger('click');
+                 });
+                 function showCoords(c)
+                 {
+                     $('input[name="cx"]').val(Math.round(c.x))
+                     $('input[name="cy"]').val(Math.round(c.y))
+                     $('input[name="cx2"]').val(Math.round(c.x2))
+                     $('input[name="cy2"]').val(Math.round(c.y2))
+                     $('input[name="cw"]').val(Math.round(c.w))
+                     $('input[name="ch"]').val(Math.round(c.h))
+                 };
+
+                 function updatePreview(c)
+                 {
+                     if (parseInt(c.w) > 0)
+                     {
+                         var rx = 360 / c.w;
+                         var ry = 180 / c.h;
+
+                         $pimg.css({
+                             width: Math.round(rx * boundx) + 'px',
+                             height: Math.round(ry * boundy) + 'px',
+                             marginLeft: '-' + Math.round(rx * c.x) + 'px',
+                             marginTop: '-' + Math.round(ry * c.y) + 'px'
+                         });
+                     }
+                 }
+
+        }
+            else
+            {
+            	alert(responseText.replace(/<.*?>/g, ''));
+            }
+            $('input[type=submit],input#load_image,input#load_image_preview').attr('disabled',false);
+        }
+    };
+        $("#editForm").ajaxSubmit(optionsUpdate2); 
+        return false;
+   }).on('click','img.img',function()
+    {
+    	$('.galery').removeClass('display_none')
+    	$('#for-map').append('<img style="width: 100%;position:absolute;vertical-align: bottom;" src="'+$(this).attr('src')+'"/>')
+        return false
+    }).on('click','#for-map img, .galery_back',function()
+    {
+    	$('#for-map').empty();
+    	$('.galery').addClass('display_none')
+    }).on('click','#loaded_image_preview input[type=checkbox]', function ()
+    {
+    	var count=$('#loaded_image_preview input[type=checkbox]').length;
+    	var count_checked=$('#loaded_image_preview input[type=checkbox]').filter(":checked").length;
+    	if(count>=3 && count_checked>3)
+    	{
+    		return false;
+    	}
+    }).on('click','.delphotoprev',function()
+    {
+         var m = 'Удалить фото?';
+         var id=$(this).data('id')
+         if(confirm(m))
+         {
+                $.ajax({
+            	  	  url: 'views/admin/ajax/events/save_preview.php',
+            	  	  type: "POST",
+            	  	  data: { del: 'true', id: id},
+        			  success: function(data) {$('#loaded_image_preview').empty().append(data)}
+                })
+         }
+         else
+         {
+            return false;
+         }
+    }).on('click','.del_video',function()
+    {
+         var m = 'Удалить видео?';
+         var id=$(this).data('id')
+         if(confirm(m))
+         {
+                $.ajax({
+            	  	  url: 'views/admin/ajax/events/savevideo.php',
+            	  	  type: "POST",
+            	  	  data: { delvideo: 'true', id: id},
+        			  success: function(data) {$('#youtubevideo').empty()}
+                })
+         }
+         else
+         {
+            return false;
+         }
+         
+    })
+
+
+  </script>

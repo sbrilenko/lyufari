@@ -1,0 +1,243 @@
+<?php 
+session_start();
+$page->addScript('js/jquery-1.8.2.js','js/jquery-ui_1.9.1.js');
+$page->setTitle('Печать заказа');
+$page->setFavicon('../img/favicon.ico');
+$page->addCss('css/print.css','css/jquery-ui-1.9.1.css')?>
+<table style="margin:10px auto 10px auto; background:#fff;padding: 20px;" width="662" cellpadding="0" cellspacing="0" >
+    <tbody><tr>
+        <td>
+        <div id="printed">
+        <table border="0" cellpadding="0" cellspacing="0" width="600" style="0px solid transparent;" class="mail_to">
+            <tbody><tr>    
+                    <td align="left" style="padding-bottom:15px;">
+                       <a href="http://<?=$_SERVER["HTTP_HOST"]?>"><img src="http://<?=$_SERVER["HTTP_HOST"]?>/img/p-l.jpg" /></a>
+                  </td>  
+                   <td valign="top" align="right" nowrap="" style="line-height: 12px;font-family:Arial;font-size:12px;color:#b4afa1;">
+                        <table>
+                            <tr>
+                                <td style="line-height: 12px;font-family:Arial;font-size:12px;color:#b4afa1;text-align: right;">Гостинично - ресторанный комплекс «Люфари»</td>
+                            </tr>
+                            <tr>
+                                <td style="line-height: 14px;font-family:Times New Roman;font-size:14px;color:#736655;text-align: right;">Донецк, ул. Калинина, 118</td>
+                            </tr>
+                            <tr>
+                                <td style="line-height: 14px;font-family:Times New Roman;font-size:14px;color:#736655;text-align: right;">(095)&nbsp;172&nbsp;72&nbsp;72</td>
+                            </tr>
+                            <tr>
+                                <td style="line-height: 12px;font-family:Georgia;font-size:12px;color:#736655;text-align: right;"><a style='color:#736655;' href="html://lyufari.com">lyufari.com</a></td>
+                            </tr>
+                        </table>
+                        
+                        
+                  </td>
+                 
+            </tr>
+            <tr>
+                <td colspan="2" align="middle" style="padding:15px 0 30px 0;font-size:24px;line-height:24px;font-family:Georgia;color:#5e4731;">
+                       Оформление заказа
+                  </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border-collapse: separate;">
+<?php
+$root = $_SERVER['DOCUMENT_ROOT'];
+require_once $root."/lib/class.invis.db.php";
+$total=0;
+if(!empty($_SESSION['z']))
+{
+    echo '<table border="0" cellpadding="0" cellspacing="0" style="width:600px;"><tbody><tr align="left" style="font-family:tahoma;font-size:12px;color:#9b9b9b;"><th style="border-bottom: 1px solid #EEECEC;">&nbsp;&nbsp;</th><th style="border-bottom: 1px solid #EEECEC;width:275px;">Наименование</th><th style="border-bottom: 1px solid #EEECEC;width:92px;">Выход</th><th style="border-bottom: 1px solid #EEECEC;width:72px;">Цена</th><th style="border-bottom: 1px solid #EEECEC;width:72px;">Кол-во</th><th style="border-bottom: 1px solid #EEECEC;width:65px;">Стоимость</th></tr><tr><td></td></tr>';
+            
+    foreach($_SESSION['z'] as $index=>$val)
+    {
+        $sql="SELECT * FROM menu_m WHERE id='".$val['id']."'";
+        $db->query($sql);
+        if($db->getCount()>0)
+        {
+            $arritem=$db->getArray();
+            $total+=$val['col']*$arritem[0]['price'];
+            echo '<tr valign="top" style="border-collapse: collapse;border:0px solid transparent;line-height: 22px;font-family:tahoma;font-size:12px;color:#303030;"><td style="padding: 5px 0;width: 25px;text-align:center;">'.($index+1).'</td><td style="padding: 5px 0;">'.$arritem[0]['name'].'</td><td style="padding: 5px 0;">'.(int)$arritem[0]['weight'].'</td><td style="padding: 5px 0;">'.$arritem[0]['price'].'&nbsp;грн.</td><td style="padding: 5px 0;">'.$val['col'].'</td><td style="padding: 5px 0;">'.($arritem[0]['price']*$val['col']).' грн</td></tr>';
+           
+        }
+    }
+    echo '</tbody></table></td>';
+}
+?>
+
+                </tr>
+            
+            <tr>
+                <td colspan="2">
+                <table style="margin-top: 63px;width:100%;">
+                    <tr>
+                         <td align="left" style="color: #7b797c;font: 14px/14px Arial;">
+                                Цены в грн.&nbsp;на&nbsp;<?php 
+                                $sql="SELECT date FROM actual_date_price";
+                                $db->query($sql);
+                                if($db->getCount()>0)
+                                {
+                                    $date=$db->getValue();
+                                    $date=explode('-',$date);
+                                    echo $date[2].".".$date[1].".".$date[0];
+                                }
+                                ?>                
+                         </td>
+                         <td align="right" style="color: #3d3828;font: 18px/18px Arial;text-align:right;">
+                                Общая стоимость заказа: <?php echo $total;?>&nbsp;грн
+                         </td>
+                    </tr>
+                </table>
+               </td>
+                
+            </tr>
+            <tr>
+            <td colspan="2">
+            <img style="margin-top:23px;" src="http://<?=$_SERVER["HTTP_HOST"]?>/img/p-f.jpg"/>
+            </td>
+            </tr>
+            <tr>
+            <td colspan="2" height="44">
+            </td>
+            </tr>
+            </tbody>
+            </table>
+        </div>
+        <table  width="600" cellpadding="0" cellspacing="0"><tbody>
+                    <tr>
+                        <td style="font-family:Tahoma;font-size:18px;color:#7b6b3d;text-align:left;">
+                            Чтобы распечатать<br />нажмите на кнопку или Ctrl+P
+                        </td>
+                        <td style="font-family:Tahoma;font-size:18px;color:#7b6b3d;text-align:right;">
+                            Чтобы отправить на почту<br />укажите email
+                        </td>
+                    </tr>
+                    <tr>
+                    <td colspan="2" style="text-align:right;padding: 10px 0;">
+                        <table width="100%" class="last_tbl">
+                        <tbody><tr>
+                        <td class="printed" style="text-align:left;padding: 10px 0px;cursor:pointer;"><img style="" src="../img/bt_print.png">
+                        </td>
+                        <td>
+                        <input style="width: 203px;background-color: #f6f6f6; border-radius: 5px 5px 5px 5px;font-family:tahoma;font-size:15px;color:#a69581;" type="text" value="">
+                        </td>
+                        <td>
+                        <img class="email disabled" style="margin-left:9px;opacity:0.6;" src="../img/send_bt.png">
+                        </td></tr>
+                        <tr>
+                        <td></td>
+                        <td class="first_add" ></td>
+                        <td><!--input type="button" class="ad_em" value="&nbsp;"/--></td>
+                        </tr>
+                        </tbody>
+                    </table>
+        </td>
+    </tr>
+</tbody></table>
+<script type='text/javascript'>
+
+function Load(){
+text = document.getElementById('printed').innerHTML;
+w = $(window).width()
+h = $(window).height()
+printwin = open('', 'printwin', 'width='+w+',height='+h);
+printwin.document.open();
+printwin.document.writeln('<html><head><title></title></head><body onload=print();close()>');
+printwin.document.writeln(text);
+printwin.document.writeln('</body></html>');
+printwin.document.close();
+}
+	$('.printed').on('click',function()
+	{
+	   Load();
+		/*window.print();
+		return false;*/
+	})
+    
+    $('input[type=text]').each(function(){
+        $('input[type=text]').keyup(function()
+        {
+               ($(this).val()!='')?$('.email').removeClass('disabled'):$('.email').addClass('disabled');
+               ($(this).val()!='')?$('.email').css({opacity:'1',cursor:'pointer'}): $('.email').css({opacity:'0.8',cursor:'default'})
+        })
+    })
+    
+    $('.email').on('click',function()
+    {
+        var th=$(this)
+        if(!th.hasClass('disabled'))
+        {
+            th.addClass('disabled');
+            var i = 0;
+           //var mails = []
+            var mails = $('input[type=text]').val()
+//        for(var i = 0; i<input.length; i++){
+//            if(input[i].value != ''){
+//                mails.push(input[i].value);
+//            }
+//        }
+            //console.log(mails);
+            if(mails != ""){
+               $.ajax({
+                    url: "../lib/class.mail.php",
+                    type: "post",
+                    async: false,
+                    data:{print:true,email:mails,data:"<table style='margin:10px auto 10px auto; background:#fff' width='615' cellpadding='10' cellspacing='0' class='mail_to'>"+$('table.mail_to').html()+'</tbody></table>'},
+                    success: function(data2){
+                        th.removeClass('disabled');
+                        $('<div id="secret">Заказ отправлен на почту</div>').dialog({modal:true,resizable:false,draggable:false,width:'250',buttons:[{text:'OK',click:function() { $( this ).remove();} }], close: function( event, ui ) {$( this ).remove();} })
+                    }
+                });
+            }else{
+                $('<div id="secret">Заполните e-mail</div>').dialog({modal:true,resizable:false,draggable:false,width:'250',buttons:[{text:'OK',click:function() { $( this ).remove();} }], close: function( event, ui ) {$( this ).remove();} })
+            }
+        }
+
+             
+        
+        
+     })
+    function IsValidateEmail(email)
+    {
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,6})$/;
+        return reg.test(email);
+    }
+    
+    
+    $('input[type=button]').on('click',function(){
+        var count = $('input[type=text]').length
+        //console.log(count)
+            if(count<10){
+                 if(count == 1){
+                    $('.first_add').append('<input style="width: 203px;background-color: #f6f6f6; border-radius: 5px 5px 5px 5px;font-family:tahoma;font-size:15px;color:#a69581;" type="text" value=""><div class="delete"></div>');
+                    return false;
+                }else{
+                    $(this).parents('.last_tbl').append('<tr><td></td><td><input style="width: 203px;background-color: #f6f6f6; border-radius: 5px 5px 5px 5px;font-family:tahoma;font-size:15px;color:#a69581;" type="text" value=""><div class="delete"></div></td><td><input type="button" class="ad_em" value="&nbsp;"/></td></tr>')
+                    $(this).hide().addClass('hidden'); 
+                }
+            }else{
+                return false;
+            }
+        
+        
+    }) 
+    
+    $('.delete').on('click', function(){
+       var count = $('input[type=text]').length 
+            if(count<10){
+                 if(count == 2){
+                    $(this).parent().addClass('first_add')
+                    $('.first_add').empty();
+                    return false;
+                }else{
+                    if($('.hidden',$(this).parent().parent()).length != 1){
+                       $('.hidden',$(this).parent().parent().prev()).removeClass('hidden').show(); 
+                    }
+                    $(this).parent().parent().remove();
+                    
+                }
+            }else{
+                return false;
+                
+            }
+    })
+	</script>

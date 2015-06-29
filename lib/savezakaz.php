@@ -1,0 +1,11 @@
+<?php
+session_start();
+if(!empty($_POST['z']))
+{
+    $_SESSION['z']=$_POST['z'];
+}
+else
+{
+    $_SESSION['z']='';
+}
+?>

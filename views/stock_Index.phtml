@@ -1,0 +1,146 @@
+<?php 
+
+    $page->addCss('css/jquery-ui-1.9.1.css');
+
+    
+  
+?>
+
+
+<div class="m-b " >
+    <div class="mar_40">
+        <div class="cl"></div>
+        <div class="af-header"></div>
+        <h1 class="title" style="margin-bottom: 14px;">События и акции</h1>
+
+
+
+
+        <ul class="stock_ul">
+            <div class="height_auto">
+                <li>
+                    <div class="img_block">
+                        <a href="/rus/stock/more">
+                            <div class="block_bg "><div class="bg"></div> <div class="center"></div> </div>
+                             <img src="../img/stock/stock_1.png" width="100%"/>
+                        </a>
+                    </div>
+                    <div class="text">
+                        <div class="date">1с 3 мая 2013 г. 13:00 по 15 июня 2013 г.ло  20:00</div>
+                        <a href="/rus/stock/more">Длинное и не слишком короткое Название события</a>
+                        <div class="after_href">Небольшой описательный текст, который включает в себя всю ключевую информацию о событии</div>
+                    </div>
+                </li>
+                <li class="mezgdu"></li>
+                <li class="right">
+                    <div class="img_block">
+                        <a href="">
+                            <div class="block_bg "><div class="bg"></div> <div class="center"></div> </div>
+                            <img src="../img/stock/stock_1.png" width="100%"/>
+                        </a>
+                    </div>
+                    <div class="text">
+                        <div class="date">с 3 мая 2013 г. 13:00 по 15 июня 2013 г.ло  20:00</div>
+                        <a href="">Длинное и не слишком короткое Название события</a>
+                        <div class="after_href">Небольшой описательный текст, который включает в себя всю ключевую информацию о событии</div>
+                    </div>
+                </li>
+                <div class="clear"></div>
+            </div>
+
+            <div class="height_auto">
+                <li>
+                    <div class="img_block">
+                        <a href="">
+                            <div class="block_bg "><div class="bg"></div> <div class="center"></div> </div>
+                            <img src="../img/stock/stock_1.png" width="100%"/>
+                        </a>
+                    </div>
+                    <div class="text">
+                        <div class="date">с 3 мая 2013 г. 13:00 по 15 июня 2013 г.ло  20:00 с 3 мая 2013 г. 13:00 по 15 июня 2013 г.ло  20:00</div>
+                        <a href="">Длинное и не слишком короткое Название события Длинное и не слишком короткое Название события</a>
+                        <div class="after_href">Небольшой описательный текст, который включает в себя всю ключевую информацию о событии Небольшой описательный текст, который включает в себя всю ключевую информацию о событии</div>
+                    </div>
+                </li>
+                <li class="mezgdu"></li>
+                <li class="right">
+                    <div class="img_block">
+                        <a href="">
+                            <div class="block_bg "><div class="bg"></div> <div class="center"></div> </div>
+                            <img src="../img/stock/stock_1.png" width="100%"/>
+                        </a>
+                    </div>
+                    <div class="text">
+                        <div class="date">с 3 мая</div>
+                        <a href="">Название</a>
+                        <div class="after_href"> текст, </div>
+                    </div>
+                </li>
+                <div class="clear"></div>
+             </div>
+
+
+                 <div class="height_auto">
+                     <li>
+                         <div class="img_block">
+                             <a href="">
+                                 <div class="block_bg "><div class="bg"></div> <div class="center"></div> </div>
+                                 <img src="../img/stock/stock_1.png" width="100%"/>
+                             </a>
+                         </div>
+                         <div class="text">
+                             <div class="date">с 3 мая 2013 г. 13:00 по 15 июня 2013 г.ло  20:00 с 3 мая 2013 г. 13:00 по 15 июня 2013 г.ло  20:00</div>
+                             <a href="">Длинное и не слишком короткое Название события Длинное и не слишком короткое Название события</a>
+                             <div class="after_href">Небольшой описательный текст, который включает в себя всю ключевую информацию о событии Небольшой описательный текст, который включает в себя всю ключевую информацию о событии</div>
+                         </div>
+                     </li>
+                     <li class="mezgdu"></li>
+                     <li class="right">
+                         <div class="img_block">
+                             <a href="">
+                                 <div class="block_bg "><div class="bg"></div> <div class="center"></div> </div>
+                                 <img src="../img/stock/stock_1.png" width="100%"/>
+                             </a>
+                         </div>
+                         <div class="text">
+                             <div class="date"></div>
+                             <a href=""></a>
+                             <div class="after_href"> </div>
+                         </div>
+                     </li>
+                     <div class="clear"></div>
+                     </div>
+        </ul>
+
+
+        <div class="clear"></div>
+
+        <div style="text-align: center;">
+            <span class="navig-left"></span>
+                <span class="page-navig active margin-zero">1</span>
+                <a class="page-navig " href="/rus/stock">2</a>
+            <span class="navig-right"></span>
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on('mouseenter','.stock_ul li .img_block',function(){
+       $(this).find('.block_bg').stop().fadeIn(200)
+    }).on('mouseleave','.stock_ul li .img_block',function(){
+            $(this).find('.block_bg').stop().fadeOut(200)
+        })
+
+
+    $(document).ready(function(){
+        $(".height_auto").each(function(){
+            var height = $(this).height()
+            console.log(height)
+            //$(this).parent().parent().find('.text').css({height:height})
+        });
+
+    })
+
+</script>

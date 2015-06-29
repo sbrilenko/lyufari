@@ -1,0 +1,163 @@
+<tr>
+<td class='head'>
+<?
+    $page->addScript('js/cookie_plag.js');
+    $page->setTitle('События и акции');
+    $tut = 'events';
+    include "menu.php"; 
+    $db = db :: getInstance(); 
+?>
+</td>
+</tr>
+<tr>
+    <td>
+        <table width="100%">
+            <tr>
+                <td class="title">События и акции</td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">
+                    <?php
+                    if($_COOKIE['data_start']!='' AND $_COOKIE['data_start']!=null)
+                		{
+                			print "<input type='text' id='start_period' name='start_period' class='date' readonly='readonly' value='".$_COOKIE['data_start']."' />";
+                		}
+                		else
+                		{
+                			print "<input type='text' id='start_period' name='start_period' class='date' readonly='readonly' value='". date("01.m.Y")."' />";
+                		}
+                	    if($_COOKIE['data_end']!='' AND $_COOKIE['data_end']!=null)
+                		{
+                			print "<input type='text' id='end_period' name='end_period' class='date' readonly='readonly' value='".$_COOKIE['data_end']."' /><button>Показать</button>";
+                		}
+                		else
+                		{
+                				print "<input type='text' id='end_period' name='end_period' class='date' readonly='readonly' value='01.".date("m.Y",mktime(0,0,0,date("m")+1,date("d"),date("Y")))."' /><button>Показать</button>";	
+                		}
+                					
+                	if($_COOKIE['data_start']!='' AND $_COOKIE['data_start']!=null AND $_COOKIE['data_end']!='' AND $_COOKIE['data_end']!=null)
+                	{
+                		$cokie_start_explode=explode('.',$_COOKIE['data_start']);
+                		$cokie_end_explode=explode('.',$_COOKIE['data_end']);
+                		$sql="SELECT * FROM events WHERE  start_date BETWEEN '".$cokie_start_explode[2].'-'.$cokie_start_explode[1].'-'.$cokie_start_explode[0]."' AND '".$cokie_end_explode[2].'-'.$cokie_end_explode[1].'-'.$cokie_end_explode[0]."' ORDER BY start_date DESC";
+                		
+                	}
+                	else
+                	{
+                			$sql="SELECT * FROM events WHERE  start_date BETWEEN '".date("Y-m-01")."' AND '".date("Y-m",mktime(0,0,0,date("m")+1,date("d"),date("Y")))."-01' ORDER BY start_date DESC";
+                	}
+                    ?>
+                    <img id="remove" class="button_clear_date_end" src="img/admin/remove.png" title="сбросить" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="float:left;" href="/admin/eventeditor/add">+ ДОБАВИТЬ СОБЫТИЕ</a><div style="clear:both;"></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="hidden">
+                    <table class="border-hidden" width="100%">
+                        <?php 
+                            $db->query($sql);
+                        	if($db->getCount()>0)
+                        	{
+                        		$arr=$db->getArray();
+                        		foreach($arr as $index=>$value)
+                        		{
+                        			print "<tr><td></td></tr><tr><td style='border:1px solid #dedede'>";
+                        			$select_photo_banner='SELECT md5_mictotime FROM banners WHERE event_id='.$value['id'];
+                        			$db->query($select_photo_banner);
+                        			if($db->getCount()>0)
+                        			{
+                        				print "<img style='float:left;width:75px;height:50px;' src='/img/stock/".$db->getValue().".jpg'/>";
+                        			}
+                        			else
+                        			{
+                        				print "<img style='float:left;width:75px;height:50px;' src='/img/admin/zaglushka.jpg'/>";
+                        			}
+                        			
+                        			print "<div style='float:left;margin-left:10px;'>
+                        					<p><a class='delevent' href='/admin/eventeditor/delete/".$value['id']."' style='margin-right:7px;'>
+                        		          		<img src='img/admin/d.png' alt='Удалить' title='Удалить'>
+                        		        	</a></p><br />
+                        		        	<p><a href='/admin/eventeditor/edit/".$value['id']."' >
+                        		          		<img src='img/admin/e.png' alt='Ред' title='Ред'>
+                        		        	</a></p></div>";
+                        		    print "<div style='float:left;margin-left:10px;width: 862px;'><b>Название:</b> ".$value['title'];
+                        			$data_start=explode('-',$value['start_date']);
+                        
+                        				print '<br /><b>Дата начала:</b> '.$data_start[2].'-'.$data_start[1].'-'.$data_start[0];
+                        				if($value['time_start_zero']!=0) {$time_start=explode(':',$value['time_start']); print ' начало <span style="color:blue;"> '.$time_start[0].':'.$time_start[1].'</span>';}
+                        				if($value['end_date']!='0000-00-00')  {
+                        					if($value['end_date']==$value['start_date']) { }
+                        					else {$data_end=explode('-',$value['end_date']); print ' - '.$data_end[2].'-'.$data_end[1].'-'.$data_end[0]; }
+                        					}
+                        				if($value['time_end_zero']!=0) {$time_end=explode(':',$value['time_end']); print ' завершение <span style="color:blue;"> '.$time_end[0].':'.$time_end[1].'</span>'; }
+                    		        echo "<br /><b>Отображение на сайте: </b>";
+                                    echo ($value['visible']==0)? "отображается":"не отображается";
+                                        print "</div>";
+                        			print "</td></tr>";
+                        		}
+                        	}
+                            else
+                            {
+                                echo '<tr><td style="font-weight: bold;color:#380b9f;text-align:center;">Записей не найдено</td></tr>';
+                            }
+                        ?>
+                    </table>
+                </td>
+            </tr>
+        </table>
+		<span id="fieldOrder">
+            
+        </span>
+    </td>
+</tr>
+<script type="text/javascript">
+function get()
+    {
+            var date_begin_=$('#start_period').val();
+        	var date_end_=$('#end_period').val();
+            $.ajax({
+        	  	  url: 'views/admin/ajax/events/sort.php',
+        	  	  type: "POST",
+        	  	  data: { date_begin: date_begin_, date_end:  date_end_},
+    			  success: function(data) {$('.border-hidden').empty().append(data)}
+    })
+    }
+$(function()
+{
+    $(document).on('click','.delevent',function()
+    {
+        var m = 'Вы уверены что хотите удалить?';
+        return (confirm(m))?true:false
+    }).on('click','button',function()
+    {
+        $.cookie('data_start',$("#start_period").val());
+        $.cookie('data_end',$("#end_period").val());
+
+        get()
+    }).on('click','#remove',function()
+    {
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1;
+        
+        var yyyy = today.getFullYear();
+        if(dd<10){dd='0'+dd} if(mm<10){mm='0'+mm} ;
+        
+        today = '01.'+mm+'.'+yyyy;
+        $('#start_period').val(today);
+        mm++;
+        if(mm+1>12) {mm=1};
+        if(mm<10){mm='0'+mm} ;
+        today_pl_m = '01.'+mm+'.'+yyyy;
+        $('#end_period').val(today_pl_m);
+        $.cookie('data_start',today);
+        $.cookie('data_end',today_pl_m);
+
+        get()
+    })
+})
+</script>
