@@ -14,8 +14,8 @@
 
 ![alt text](https://github.com/sbrilenko/lyufari/blob/master/mockup/maket/Люфари_мероприятия_кофейный_3_1440.png)
 
-![alt text](https://github.com/sbrilenko/lyufari/blob/master/mockup/акции и события/Люфари_акции_кофейный_4_980.jpg)
+![alt text](https://github.com/sbrilenko/lyufari/blob/master/mockup/акции%20и%20события/Люфари_акции_кофейный_4_980.jpg)
 
-![alt text](https://github.com/sbrilenko/lyufari/blob/master/mockup/зона отдыха/Люфари_зона_отдыха_кофейный_980_3.jpg)
+![alt text](https://github.com/sbrilenko/lyufari/blob/master/mockup/зона%20отдыха/Люфари_зона_отдыха_кофейный_980_3.jpg)
 
 
